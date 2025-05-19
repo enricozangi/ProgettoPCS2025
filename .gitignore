@@ -32,12 +32,15 @@
 *.app
 
 # Folders
-*Debug*
-*debug*
-*Release*
-*release*
-*Build*
-*build*
+Debug
+debug
+Release
+release
+Build
+build
 
 # MacOS
-*.DS_store
+.DS_store
+
+# Others
+.vscode
