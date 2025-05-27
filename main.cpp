@@ -1,6 +1,5 @@
 #include "polyhedron_library.hpp"
 
-
 #include <iostream>
 #include "Utils.hpp"
 
