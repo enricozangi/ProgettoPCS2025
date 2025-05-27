@@ -48,14 +48,9 @@ list(APPEND ${PROJECT_NAME}_TEST_sources ${${PROJECT_NAME}_sources} ${src_test_s
 list(APPEND ${PROJECT_NAME}_TEST_headers ${${PROJECT_NAME}_headers} ${src_test_headers})
 list(APPEND ${PROJECT_NAME}_TEST_includes ${${PROJECT_NAME}_includes} ${src_test_includes})
 
-#################### Copy file ################################
-
-# file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/ListPolygons DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
 ############################## Add executable ##################################################
 
-# Add two executables: ProgettoPCS2025 and ProgettoPCS2025_TEST
-
+# Main executable
 add_executable(${PROJECT_NAME} main.cpp
       ${${PROJECT_NAME}_sources}
       ${${PROJECT_NAME}_headers})
@@ -64,6 +59,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${${CMAKE_PROJECT_NAME}_includ
 target_link_libraries(${PROJECT_NAME} PUBLIC ${${PROJECT_NAME}_LINKED_LIBRARIES})
 target_compile_options(${PROJECT_NAME} PUBLIC -fPIC)
 
+# Test executable
 add_executable(${PROJECT_NAME}_TEST main_test.cpp
       ${${PROJECT_NAME}_TEST_sources}
       ${${PROJECT_NAME}_TEST_headers})
@@ -71,3 +67,8 @@ add_executable(${PROJECT_NAME}_TEST main_test.cpp
 target_include_directories(${PROJECT_NAME}_TEST PUBLIC ${${CMAKE_PROJECT_NAME}_TEST_includes})
 target_link_libraries(${PROJECT_NAME}_TEST PUBLIC ${${PROJECT_NAME}_LINKED_LIBRARIES})
 target_compile_options(${PROJECT_NAME}_TEST PUBLIC -fPIC)
+
+# ✅ FORCE-ADD Utils.cpp to the test target to guarantee linking
+target_sources(${PROJECT_NAME}_TEST PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Utils.cpp
+)

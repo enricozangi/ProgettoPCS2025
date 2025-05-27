@@ -1,7 +1,11 @@
 #include "Utils.hpp"
 #include "polyhedron_library.hpp"
 #include <cmath>
+
 using namespace std;
+
+namespace polyhedron_library {
+
 string controllaQuadrupla(const std::vector<int>& quadrupla) {
     if (quadrupla.size() != 4)
         return "La quadrupla non ha 4 numeri";
@@ -28,7 +32,6 @@ string controllaQuadrupla(const std::vector<int>& quadrupla) {
 
     return "OK";
 }
-
 
 Polyhedron tetraedro() {
     Polyhedron p;
@@ -59,17 +62,18 @@ Polyhedron tetraedro() {
 
     return p;
 }
+
 Polyhedron ottaedro() {
     Polyhedron p;
     p.id = 1;
 
     p.vertices = {
-        {0, 1, 0, 0, false},   // +X
-        {1, -1, 0, 0, false},  // -X
-        {2, 0, 1, 0, false},   // +Y
-        {3, 0, -1, 0, false},  // -Y
-        {4, 0, 0, 1, false},   // +Z
-        {5, 0, 0, -1, false}   // -Z
+        {0, 1, 0, 0, false},
+        {1, -1, 0, 0, false},
+        {2, 0, 1, 0, false},
+        {3, 0, -1, 0, false},
+        {4, 0, 0, 1, false},
+        {5, 0, 0, -1, false}
     };
 
     p.edges = {
@@ -100,6 +104,7 @@ Polyhedron ottaedro() {
 
     return p;
 }
+
 Polyhedron icosaedro() {
     Polyhedron p;
     p.id = 2;
@@ -156,3 +161,5 @@ Polyhedron icosaedro() {
 
     return p;
 }
+
+}  // chiusura namespace

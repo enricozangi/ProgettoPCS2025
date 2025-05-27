@@ -5,6 +5,7 @@
 #include <cmath>
 #include <gtest/gtest.h>
 #include "polyhedron_library.hpp"
+#include "Utils.hpp"
 
 using namespace std;
 using namespace polyhedron_library;
@@ -53,5 +54,23 @@ namespace polyhedron_library_test
         Face face3{2, vertices_list, edges_list};
 
         EXPECT_FALSE(face3.isValid());
+    }
+
+    TEST(isValidTest, TetrahedronTest)
+    {
+        Polyhedron t = tetraedro();
+        EXPECT_TRUE(t.isValid());
+    }
+
+    TEST(isValidTest, OctahedronTest)
+    {
+        Polyhedron o = ottaedro();
+        EXPECT_TRUE(o.isValid());
+    }
+
+    TEST(isValidTest, IcosahedronTest)
+    {
+        Polyhedron i = icosaedro();
+        EXPECT_TRUE(i.isValid());
     }
 }
