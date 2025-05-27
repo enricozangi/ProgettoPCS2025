@@ -6,14 +6,13 @@
 
 using namespace polyhedron_library;
 using namespace std;
-namespace polyhedron_library {
-    std::string controllaQuadrupla(const std::vector<int>& quadrupla);
-}
 
-using polyhedron_library::controllaQuadrupla;
+string controllaQuadrupla(const vector<int>& quadrupla);
 
-namespace polyhedron_library {
-    Polyhedron tetraedro();
-    Polyhedron ottaedro();
-    Polyhedron icosaedro();
-}
+Polyhedron tetraedro();
+Polyhedron ottaedro();
+Polyhedron icosaedro();
+
+double norm (const Vertex& v);
+Vertex normalize(const Vertex& v);
+

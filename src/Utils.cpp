@@ -3,8 +3,7 @@
 #include <cmath>
 
 using namespace std;
-
-namespace polyhedron_library {
+using namespace polyhedron_library;
 
 string controllaQuadrupla(const std::vector<int>& quadrupla) {
     if (quadrupla.size() != 4)
@@ -162,4 +161,25 @@ Polyhedron icosaedro() {
     return p;
 }
 
-}  // chiusura namespace
+// function that computes the distance of a vertex from origin
+
+double norm (const Vertex& v)
+{
+    return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+}
+
+
+// function that normalize vertices
+
+Vertex normalize(const Vertex& v)
+{
+    double norm_v = norm(v);
+
+    if(norm_v == 0)
+    {
+        cerr << "norm is 0" << endl;
+        return v;
+    }
+
+    return {v.id, v.x / norm_v, v.y / norm_v, v.z / norm_v};
+};

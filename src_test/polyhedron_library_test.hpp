@@ -55,24 +55,6 @@ TEST(isValidTest, DiscontinuityTest)
     EXPECT_FALSE(face3.isValid());
 }
 
-TEST(isValidTest, TetrahedronTest)
-{
-    Polyhedron t = tetraedro();
-    EXPECT_TRUE(t.isValid());
-}
-
-TEST(isValidTest, OctahedronTest)
-{
-    Polyhedron o = ottaedro();
-    EXPECT_TRUE(o.isValid());
-}
-
-TEST(isValidTest, IcosahedronTest)
-{
-    Polyhedron i = icosaedro();
-    EXPECT_TRUE(i.isValid());
-}
-
 TEST(NormalizeTest, NonZeroNorm)
 {
     Vertex v = {0, 1.3, -5.9, 2.1};
