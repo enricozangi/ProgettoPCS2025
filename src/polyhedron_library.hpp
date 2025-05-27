@@ -8,8 +8,6 @@ using namespace std;
 namespace polyhedron_library
 {
 
-    // vertices (Cells0D)
-
     struct Vertex
     {
         int id;
@@ -17,8 +15,6 @@ namespace polyhedron_library
         bool ShortPath;
     };
     
-    // edges (Cells1D)
-
     struct Edge
     {
         int id;
@@ -27,23 +23,14 @@ namespace polyhedron_library
         bool ShortPath;
     };
     
-    // faces (Cells2D)
-
     struct Face
     {
         int id;
         vector<int> vertices;
         vector<Edge> edges;
         
-        int numVertices() const
-        {
-            return vertices.size();
-        }
-
-        int numEdges() const
-        {
-            return edges.size();
-        }
+        int numVertices() const { return vertices.size(); }
+        int numEdges() const { return edges.size(); }
 
         bool isValid() const
         {
@@ -51,7 +38,7 @@ namespace polyhedron_library
 
             for (int e = 0; e < E; e++)
             {             
-                if (edges[e].end != edges[(e + 1)%E].origin)
+                if (edges[e].end != edges[(e + 1) % E].origin)
                 {
                     cerr << "Discontinuity in the edges." << endl;
                     return false;
@@ -62,35 +49,21 @@ namespace polyhedron_library
                     cerr << "Vertices and edges don't match." << endl;
                     return false;
                 }
-                
             }
             return true;
         }
     };
 
-    // polyhedra (Cells3D)
-
     struct Polyhedron
     {
         int id;
-        vector<int> vertices;
-        vector<int> edges;
+        vector<Vertex> vertices;
+        vector<Edge> edges;
         vector<Face> faces;
         
-        int numVertices() const
-        {
-            return vertices.size();
-        }
-
-        int numEdges() const
-        {
-            return edges.size();
-        }
-
-        int numFaces() const
-        {
-            return faces.size();
-        }
+        int numVertices() const { return vertices.size(); }
+        int numEdges() const { return edges.size(); }
+        int numFaces() const { return faces.size(); }
 
         bool isValid() const
         {
@@ -98,24 +71,13 @@ namespace polyhedron_library
 
             for (int e = 0; e < E; e++)
             {
-                if (! faces[e].isValid())
+                if (!faces[e].isValid())
                 {
                     cerr << "Invalid polyhedron." << endl;
                     return false;
                 }
-              
-            return true;
             }
-            
+            return true;
         }
     };
-    
-
-
-
-
-
-
-
-
 }
