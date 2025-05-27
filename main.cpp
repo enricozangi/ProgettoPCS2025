@@ -1,7 +1,7 @@
 #include "polyhedron_library.hpp"
+#include "Utils.hpp"
 
 #include <iostream>
-#include "Utils.hpp"
 
 using namespace std;
 using namespace polyhedron_library;

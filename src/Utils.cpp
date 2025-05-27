@@ -5,7 +5,8 @@
 using namespace std;
 using namespace polyhedron_library;
 
-string controllaQuadrupla(const std::vector<int>& quadrupla) {
+string controllaQuadrupla(const std::vector<int>& quadrupla)
+{
     if (quadrupla.size() != 4)
         return "La quadrupla non ha 4 numeri";
 
@@ -32,7 +33,8 @@ string controllaQuadrupla(const std::vector<int>& quadrupla) {
     return "OK";
 }
 
-Polyhedron tetraedro() {
+Polyhedron tetraedro()
+{
     Polyhedron p;
     p.id = 1;
 
@@ -62,7 +64,8 @@ Polyhedron tetraedro() {
     return p;
 }
 
-Polyhedron ottaedro() {
+Polyhedron ottaedro()
+{
     Polyhedron p;
     p.id = 1;
 
@@ -104,7 +107,8 @@ Polyhedron ottaedro() {
     return p;
 }
 
-Polyhedron icosaedro() {
+Polyhedron icosaedro()
+{
     Polyhedron p;
     p.id = 2;
 
@@ -181,5 +185,5 @@ Vertex normalize(const Vertex& v)
         return v;
     }
 
-    return {v.id, v.x / norm_v, v.y / norm_v, v.z / norm_v};
+    return {v.id, v.x / norm_v, v.y / norm_v, v.z / norm_v, false};
 };

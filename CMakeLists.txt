@@ -67,8 +67,3 @@ add_executable(${PROJECT_NAME}_TEST main_test.cpp
 target_include_directories(${PROJECT_NAME}_TEST PUBLIC ${${CMAKE_PROJECT_NAME}_TEST_includes})
 target_link_libraries(${PROJECT_NAME}_TEST PUBLIC ${${PROJECT_NAME}_LINKED_LIBRARIES})
 target_compile_options(${PROJECT_NAME}_TEST PUBLIC -fPIC)
-
-# ✅ FORCE-ADD Utils.cpp to the test target to guarantee linking
-target_sources(${PROJECT_NAME}_TEST PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Utils.cpp
-)

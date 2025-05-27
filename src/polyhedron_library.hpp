@@ -22,6 +22,11 @@ namespace polyhedron_library
         int origin;
         int end;
         bool ShortPath;
+
+        void swapVertices()
+        {
+        swap(origin, end);
+        }
     };
     
     struct Face
@@ -38,16 +43,31 @@ namespace polyhedron_library
             int E = numEdges();
 
             for (int e = 0; e < E; e++)
-            {             
-                if (edges[e].end != edges[(e + 1) % E].origin)
-                {
-                    cerr << "Discontinuity in the edges." << endl;
-                    return false;
-                }
-
+            {
                 if (vertices[e] != edges[e].origin)
                 {
                     cerr << "Vertices and edges don't match." << endl;
+                    return false;
+                }
+            }
+
+            Edge e0 = edges[0];
+
+            if(e0.end != edges[1].origin && e0.end != edges[1].end)
+            {
+                e0.swapVertices();
+            }
+
+            for (int e = 0; e < E; e++)
+            {
+                int v1 = edges[e].end;
+
+                int next_v1 = edges[(e + 1) % E].origin;
+                int next_v2 = edges[(e + 1) % E].end;
+
+                if (v1 != next_v1 && v1 != next_v2)
+                {
+                    cerr << "Discontinuity in the edges." << endl;
                     return false;
                 }
             }
