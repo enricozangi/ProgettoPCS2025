@@ -2,9 +2,5 @@
 
 #include <iostream>
 #include <vector>
-
-int main()
-{
-
-    return 0;
-}
+using namespace std;
+string controllaQuadrupla(const std::vector<int>& quadrupla);
