@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "polyhedron_library_test.hpp"
 #include "Utils_test.hpp"
+#include "triangolazione_test.hpp"
 
 int main(int argc, char *argv[])
 {
