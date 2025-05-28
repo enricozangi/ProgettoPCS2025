@@ -19,6 +19,7 @@ Polyhedron icosaedro();
 
 // normalize vertices
 
-double norm (const Vertex& v);
+double norm(const Vertex& v);
 Vertex normalize(const Vertex& v);
+
 

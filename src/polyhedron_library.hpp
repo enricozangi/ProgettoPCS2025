@@ -25,7 +25,7 @@ namespace polyhedron_library
 
         void swapVertices()
         {
-        swap(origin, end);
+            swap(origin, end);
         }
     };
     
@@ -38,32 +38,62 @@ namespace polyhedron_library
         int numVertices() const { return vertices.size(); }
         int numEdges() const { return edges.size(); }
 
+        vector<Edge> sortEdges() const
+        {
+            int E = numEdges();
+            vector<Edge> edges_copy = edges;
+            vector<Edge> sorted_list;
+
+            for(int e = 0; e < E; e++)
+            {
+                for(int j = e + 1; j < E; j++)
+                {
+                    int v0 = edges_copy[e].end;
+                    int next_v1 = edges_copy[j].origin;
+                    int next_v2 = edges_copy[j].end;
+
+                    if(v0 == next_v1)
+                    {
+                        sorted_list.push_back(edges_copy[j]);
+                    }
+
+                    if(v0 == next_v2)
+                    {
+                        edges_copy[j].swapVertices();
+                        sorted_list.push_back(edges_copy[j]);
+                    }
+                }
+            }
+            return sorted_list;
+        }
+
         bool isValid() const
         {
             int E = numEdges();
+            vector<Edge> edges_list= sortEdges();
 
             for (int e = 0; e < E; e++)
             {
-                if (vertices[e] != edges[e].origin)
+                if (vertices[e] != edges_list[e].origin)
                 {
                     cerr << "Vertices and edges don't match." << endl;
                     return false;
                 }
             }
 
-            Edge e0 = edges[0];
+            Edge e0 = edges_list[0];
 
-            if(e0.end != edges[1].origin && e0.end != edges[1].end)
+            if(e0.end != edges_list[1].origin && e0.end != edges_list[1].end)
             {
                 e0.swapVertices();
             }
 
             for (int e = 0; e < E; e++)
             {
-                int v1 = edges[e].end;
+                int v1 = edges_list[e].end;
 
-                int next_v1 = edges[(e + 1) % E].origin;
-                int next_v2 = edges[(e + 1) % E].end;
+                int next_v1 = edges_list[(e + 1) % E].origin;
+                int next_v2 = edges_list[(e + 1) % E].end;
 
                 if (v1 != next_v1 && v1 != next_v2)
                 {

@@ -54,3 +54,18 @@ TEST(isValidTest, DiscontinuityTest)
 
     EXPECT_FALSE(face3.isValid());
 }
+
+// test for sorting function
+
+TEST(SortTest, SortEdgesTest)
+{
+    Face face_test = {0, {0,1,4}, {{0, 0, 1, false}, {1, 0, 4, false}, {5, 1, 4, false}}};
+
+    face_test.sortEdges();
+
+    for (size_t i = 0; i < face_test.edges.size() - 1; ++i)
+    {
+        EXPECT_EQ(face_test.edges[i].end, face_test.edges[i + 1].origin)
+            << "Errore tra edge " << i << " e " << i + 1;
+    }
+}
