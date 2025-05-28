@@ -43,6 +43,7 @@ namespace polyhedron_library
             if (edges.empty()) return {};
 
             vector<Edge> unsorted = edges;
+            size_t E = unsorted.size();
             vector<Edge> sorted;
 
             sorted.push_back(unsorted[0]);
@@ -75,9 +76,13 @@ namespace polyhedron_library
 
                     if (!found)
                     {
-                        std::cerr << "Errore: impossibile ordinare tutti gli edge, sequenza spezzata.\n";
+                        cerr << "sort error" << endl;
                         break;
                     }
+                }    
+                if (sorted.size() != E)
+                {
+                    cerr << "size error" << endl;
                 }
             return sorted;
         }
@@ -86,7 +91,7 @@ namespace polyhedron_library
         bool isValid() const
         {
             int E = numEdges();
-            vector<Edge> edges_list= sortEdges();
+            vector<Edge> edges_list = sortEdges();
 
             for (int e = 0; e < E; e++)
             {
