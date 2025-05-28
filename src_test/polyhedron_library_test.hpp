@@ -84,11 +84,12 @@ TEST(SortTest, SortEdgesTest)
 
     Face face_test = {0, vertices_list, edges_list};
 
-    face_test.sortEdges();
+    vector<Edge> sorted = face_test.sortEdges();
+    int E = face_test.numEdges();
 
-    for (size_t i = 0; i < face_test.edges.size() - 1; ++i)
+    for (size_t i = 0; i < sorted.size() - 1; ++i)
     {
-        EXPECT_EQ(face_test.edges[i].end, face_test.edges[i + 1].origin)
-            << "Errore tra edge " << i << " e " << i + 1;
+        EXPECT_EQ(sorted[i].end, sorted[(i + 1) % E].origin);
+        cerr << "Error between edge " << i << " and " << i + 1 << endl;
     }
 }

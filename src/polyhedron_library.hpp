@@ -40,32 +40,48 @@ namespace polyhedron_library
 
         vector<Edge> sortEdges() const
         {
-            int E = numEdges();
-            vector<Edge> edges_copy = edges;
-            vector<Edge> sorted_list;
+            if (edges.empty()) return {};
 
-            for(int e = 0; e < E; e++)
-            {
-                for(int j = e + 1; j < E; j++)
+            vector<Edge> unsorted = edges;
+            vector<Edge> sorted;
+
+            sorted.push_back(unsorted[0]);
+            unsorted.erase(unsorted.begin());
+
+                while (!unsorted.empty())
                 {
-                    int v0 = edges_copy[e].end;
-                    int next_v1 = edges_copy[j].origin;
-                    int next_v2 = edges_copy[j].end;
+                    int current_end = sorted.back().end;
+                    bool found = false;
 
-                    if(v0 == next_v1)
+                    for (auto it = unsorted.begin(); it != unsorted.end(); ++it)
                     {
-                        sorted_list.push_back(edges_copy[j]);
+                        if (it->origin == current_end)
+                        {
+                            sorted.push_back(*it);
+                            unsorted.erase(it);
+                            found = true;
+                            break;
+                        }
+                        else if (it->end == current_end)
+                        {
+                            Edge flipped = *it;
+                            flipped.swapVertices();
+                            sorted.push_back(flipped);
+                            unsorted.erase(it);
+                            found = true;
+                            break;
+                        }
                     }
 
-                    if(v0 == next_v2)
+                    if (!found)
                     {
-                        edges_copy[j].swapVertices();
-                        sorted_list.push_back(edges_copy[j]);
+                        std::cerr << "Errore: impossibile ordinare tutti gli edge, sequenza spezzata.\n";
+                        break;
                     }
                 }
-            }
-            return sorted_list;
+            return sorted;
         }
+
 
         bool isValid() const
         {
