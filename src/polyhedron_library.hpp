@@ -32,7 +32,7 @@ namespace polyhedron_library
     struct Face
     {
         int id;
-        vector<int> vertices;
+        vector<Vertex> vertices;
         vector<Edge> edges;
         
         int numVertices() const { return vertices.size(); }
@@ -74,7 +74,7 @@ namespace polyhedron_library
 
             for (int e = 0; e < E; e++)
             {
-                if (vertices[e] != edges_list[e].origin)
+                if (vertices[e].id != edges_list[e].origin)
                 {
                     cerr << "Vertices and edges don't match." << endl;
                     return false;

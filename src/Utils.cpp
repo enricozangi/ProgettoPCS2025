@@ -32,9 +32,7 @@ string controllaQuadrupla(const std::vector<int>& quadrupla)
 
     return "OK";
 }
-
-Polyhedron tetraedro()
-{
+Polyhedron tetraedro() {
     Polyhedron p;
     p.id = 1;
 
@@ -55,17 +53,16 @@ Polyhedron tetraedro()
     };
 
     p.faces = {
-        {0, {0, 1, 2}, {p.edges[0], p.edges[1], p.edges[2]}},
-        {1, {0, 1, 3}, {p.edges[0], p.edges[4], p.edges[3]}},
-        {2, {1, 2, 3}, {p.edges[1], p.edges[5], p.edges[4]}},
-        {3, {2, 0, 3}, {p.edges[2], p.edges[3], p.edges[5]}}
+        {0, {p.vertices[0], p.vertices[1], p.vertices[2]}, {p.edges[0], p.edges[1], p.edges[2]}},
+        {1, {p.vertices[0], p.vertices[1], p.vertices[3]}, {p.edges[0], p.edges[4], p.edges[3]}},
+        {2, {p.vertices[1], p.vertices[2], p.vertices[3]}, {p.edges[1], p.edges[5], p.edges[4]}},
+        {3, {p.vertices[2], p.vertices[0], p.vertices[3]}, {p.edges[2], p.edges[3], p.edges[5]}}
     };
 
     return p;
 }
 
-Polyhedron ottaedro()
-{
+Polyhedron ottaedro() {
     Polyhedron p;
     p.id = 1;
 
@@ -94,21 +91,20 @@ Polyhedron ottaedro()
     };
 
     p.faces = {
-        {0, {0, 2, 4}, {p.edges[0], p.edges[8], p.edges[2]}},
-        {1, {0, 4, 3}, {p.edges[2], p.edges[10], p.edges[1]}},
-        {2, {0, 3, 5}, {p.edges[1], p.edges[11], p.edges[3]}},
-        {3, {0, 5, 2}, {p.edges[3], p.edges[9], p.edges[0]}},
-        {4, {1, 2, 4}, {p.edges[4], p.edges[8], p.edges[6]}},
-        {5, {1, 4, 3}, {p.edges[6], p.edges[10], p.edges[5]}},
-        {6, {1, 3, 5}, {p.edges[5], p.edges[11], p.edges[7]}},
-        {7, {1, 5, 2}, {p.edges[7], p.edges[9], p.edges[4]}}
+        {0, {p.vertices[0], p.vertices[2], p.vertices[4]}, {p.edges[0], p.edges[8], p.edges[2]}},
+        {1, {p.vertices[0], p.vertices[4], p.vertices[3]}, {p.edges[2], p.edges[10], p.edges[1]}},
+        {2, {p.vertices[0], p.vertices[3], p.vertices[5]}, {p.edges[1], p.edges[11], p.edges[3]}},
+        {3, {p.vertices[0], p.vertices[5], p.vertices[2]}, {p.edges[3], p.edges[9], p.edges[0]}},
+        {4, {p.vertices[1], p.vertices[2], p.vertices[4]}, {p.edges[4], p.edges[8], p.edges[6]}},
+        {5, {p.vertices[1], p.vertices[4], p.vertices[3]}, {p.edges[6], p.edges[10], p.edges[5]}},
+        {6, {p.vertices[1], p.vertices[3], p.vertices[5]}, {p.edges[5], p.edges[11], p.edges[7]}},
+        {7, {p.vertices[1], p.vertices[5], p.vertices[2]}, {p.edges[7], p.edges[9], p.edges[4]}}
     };
 
     return p;
 }
 
-Polyhedron icosaedro()
-{
+Polyhedron icosaedro() {
     Polyhedron p;
     p.id = 2;
 
@@ -140,31 +136,30 @@ Polyhedron icosaedro()
     };
 
     p.faces = {
-        {0, {0,1,4}, {p.edges[0], p.edges[1], p.edges[5]}},
-        {1, {0,4,5}, {p.edges[1], p.edges[2], p.edges[18]}},
-        {2, {0,5,8}, {p.edges[2], p.edges[3], p.edges[20]}},
-        {3, {0,8,9}, {p.edges[3], p.edges[4], p.edges[7]}},
-        {4, {0,9,1}, {p.edges[4], p.edges[8], p.edges[0]}},
-        {5, {1,4,8}, {p.edges[5], p.edges[7], p.edges[18]}},
-        {6, {1,5,9}, {p.edges[6], p.edges[8], p.edges[20]}},
-        {7, {1,8,10}, {p.edges[7], p.edges[19], p.edges[12]}},
-        {8, {1,9,11}, {p.edges[8], p.edges[21], p.edges[13]}},
-        {9, {2,3,4}, {p.edges[9], p.edges[14], p.edges[10]}},
-        {10, {2,4,5}, {p.edges[10], p.edges[11], p.edges[18]}},
-        {11, {2,5,10}, {p.edges[11], p.edges[12], p.edges[19]}},
-        {12, {2,10,11}, {p.edges[12], p.edges[13], p.edges[16]}},
-        {13, {2,11,3}, {p.edges[13], p.edges[17], p.edges[9]}},
-        {14, {3,4,10}, {p.edges[14], p.edges[16], p.edges[19]}},
-        {15, {3,5,11}, {p.edges[15], p.edges[17], p.edges[21]}},
-        {16, {3,10,6}, {p.edges[16], p.edges[25], p.edges[22]}},
-        {17, {3,11,7}, {p.edges[17], p.edges[26], p.edges[22]}},
-        {18, {4,8,10}, {p.edges[18], p.edges[19], p.edges[23]}},
-        {19, {5,9,11}, {p.edges[20], p.edges[21], p.edges[28]}}
+        {0, {p.vertices[0], p.vertices[1], p.vertices[4]}, {p.edges[0], p.edges[1], p.edges[5]}},
+        {1, {p.vertices[0], p.vertices[4], p.vertices[5]}, {p.edges[1], p.edges[2], p.edges[18]}},
+        {2, {p.vertices[0], p.vertices[5], p.vertices[8]}, {p.edges[2], p.edges[3], p.edges[20]}},
+        {3, {p.vertices[0], p.vertices[8], p.vertices[9]}, {p.edges[3], p.edges[4], p.edges[7]}},
+        {4, {p.vertices[0], p.vertices[9], p.vertices[1]}, {p.edges[4], p.edges[8], p.edges[0]}},
+        {5, {p.vertices[1], p.vertices[4], p.vertices[8]}, {p.edges[5], p.edges[7], p.edges[18]}},
+        {6, {p.vertices[1], p.vertices[5], p.vertices[9]}, {p.edges[6], p.edges[8], p.edges[20]}},
+        {7, {p.vertices[1], p.vertices[8], p.vertices[10]}, {p.edges[7], p.edges[19], p.edges[12]}},
+        {8, {p.vertices[1], p.vertices[9], p.vertices[11]}, {p.edges[8], p.edges[21], p.edges[13]}},
+        {9, {p.vertices[2], p.vertices[3], p.vertices[4]}, {p.edges[9], p.edges[14], p.edges[10]}},
+        {10, {p.vertices[2], p.vertices[4], p.vertices[5]}, {p.edges[10], p.edges[11], p.edges[18]}},
+        {11, {p.vertices[2], p.vertices[5], p.vertices[10]}, {p.edges[11], p.edges[12], p.edges[19]}},
+        {12, {p.vertices[2], p.vertices[10], p.vertices[11]}, {p.edges[12], p.edges[13], p.edges[16]}},
+        {13, {p.vertices[2], p.vertices[11], p.vertices[3]}, {p.edges[13], p.edges[17], p.edges[9]}},
+        {14, {p.vertices[3], p.vertices[4], p.vertices[10]}, {p.edges[14], p.edges[16], p.edges[19]}},
+        {15, {p.vertices[3], p.vertices[5], p.vertices[11]}, {p.edges[15], p.edges[17], p.edges[21]}},
+        {16, {p.vertices[3], p.vertices[10], p.vertices[6]}, {p.edges[16], p.edges[25], p.edges[22]}},
+        {17, {p.vertices[3], p.vertices[11], p.vertices[7]}, {p.edges[17], p.edges[26], p.edges[22]}},
+        {18, {p.vertices[4], p.vertices[8], p.vertices[10]}, {p.edges[18], p.edges[19], p.edges[23]}},
+        {19, {p.vertices[5], p.vertices[9], p.vertices[11]}, {p.edges[20], p.edges[21], p.edges[28]}}
     };
 
     return p;
 }
-
 // function that computes the distance of a vertex from origin
 
 double norm (const Vertex& v)

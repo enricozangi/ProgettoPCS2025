@@ -7,13 +7,16 @@
 #include "polyhedron_library.hpp"
 #include "Utils.hpp"
 
-
 using namespace std;
 using namespace polyhedron_library;
 
 TEST(isValidTest, ValidFaceTest)
 {
-    vector<int> vertices_list = {0, 1, 2};
+    vector<Vertex> vertices_list = {
+        {0, 0.0, 0.0, 0.0, false},
+        {1, 1.0, 0.0, 0.0, false},
+        {2, 0.0, 1.0, 0.0, false}
+    };
 
     Edge e0{0, 0, 1, 0};
     Edge e1{1, 1, 2, 0};
@@ -28,7 +31,11 @@ TEST(isValidTest, ValidFaceTest)
 
 TEST(isValidTest, MismatchedListsTest)
 {
-    vector<int> vertices_list = {1, 0, 2};
+    vector<Vertex> vertices_list = {
+        {1, 0.0, 0.0, 0.0, false},
+        {0, 1.0, 0.0, 0.0, false},
+        {2, 0.0, 1.0, 0.0, false}
+    };
 
     Edge e0{0, 0, 1, 0};
     Edge e1{1, 1, 2, 0};
@@ -43,7 +50,11 @@ TEST(isValidTest, MismatchedListsTest)
 
 TEST(isValidTest, DiscontinuityTest)
 {
-    vector<int> vertices_list = {0, 1, 2};
+    vector<Vertex> vertices_list = {
+        {0, 0.0, 0.0, 0.0, false},
+        {1, 1.0, 0.0, 0.0, false},
+        {2, 0.0, 1.0, 0.0, false}
+    };
 
     Edge e0{0, 0, 1, 0};
     Edge e1{1, 1, 2, 0};
@@ -59,7 +70,19 @@ TEST(isValidTest, DiscontinuityTest)
 
 TEST(SortTest, SortEdgesTest)
 {
-    Face face_test = {0, {0,1,4}, {{0, 0, 1, false}, {1, 0, 4, false}, {5, 1, 4, false}}};
+    vector<Vertex> vertices_list = {
+        {0, 0.0, 0.0, 0.0, false},
+        {1, 1.0, 0.0, 0.0, false},
+        {4, 0.0, 1.0, 0.0, false}
+    };
+
+    vector<Edge> edges_list = {
+        {0, 0, 1, false},
+        {1, 0, 4, false},
+        {5, 1, 4, false}
+    };
+
+    Face face_test = {0, vertices_list, edges_list};
 
     face_test.sortEdges();
 
