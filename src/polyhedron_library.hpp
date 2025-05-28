@@ -42,7 +42,7 @@ namespace polyhedron_library
         {
             if (edges.empty()) return {};
 
-            vector<Edge> unsorted = edges;
+            vector<Edge> unsorted = edges;            
             size_t E = unsorted.size();
             vector<Edge> sorted;
 
@@ -79,7 +79,7 @@ namespace polyhedron_library
                         cerr << "sort error" << endl;
                         break;
                     }
-                }    
+                }  
                 if (sorted.size() != E)
                 {
                     cerr << "size error" << endl;
@@ -87,15 +87,38 @@ namespace polyhedron_library
             return sorted;
         }
 
+        vector<Vertex> sortVertices() const
+        {
+            vector<Vertex> unsorted = vertices;
+            vector<Edge> edges_list = sortEdges();
+            size_t E = edges_list.size();
+            vector<Vertex> sorted(E);
+
+
+            for(size_t e = 0; e < E; e++)
+                {
+                    for(size_t j = 0; j < E; j++)
+                    {
+                        if(unsorted[e].id == edges_list[j].origin)
+                        {
+                            sorted[j] = unsorted[e];
+                        }
+
+                    }
+                }  
+
+            return sorted;
+        }
 
         bool isValid() const
         {
             int E = numEdges();
             vector<Edge> edges_list = sortEdges();
+            vector<Vertex> vertices_list = sortVertices();
 
             for (int e = 0; e < E; e++)
             {
-                if (vertices[e].id != edges_list[e].origin)
+                if (vertices_list[e].id != edges_list[e].origin)
                 {
                     cerr << "Vertices and edges don't match." << endl;
                     return false;

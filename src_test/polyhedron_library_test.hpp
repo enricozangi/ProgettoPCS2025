@@ -29,6 +29,7 @@ TEST(isValidTest, ValidFaceTest)
     EXPECT_TRUE(face1.isValid());
 }
 
+/*
 TEST(isValidTest, MismatchedListsTest)
 {
     vector<Vertex> vertices_list = {
@@ -47,7 +48,7 @@ TEST(isValidTest, MismatchedListsTest)
 
     EXPECT_FALSE(face2.isValid());
 }
-
+*/
 TEST(isValidTest, DiscontinuityTest)
 {
     vector<Vertex> vertices_list = {

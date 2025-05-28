@@ -62,7 +62,8 @@ Polyhedron tetraedro() {
     return p;
 }
 
-Polyhedron ottaedro() {
+Polyhedron ottaedro()
+{
     Polyhedron p;
     p.id = 1;
 
@@ -106,60 +107,64 @@ Polyhedron ottaedro() {
 
 Polyhedron icosaedro()
 {
-    Polyhedron p;
-    p.id = 2;
+	Polyhedron P;
+	P.id = 2;
 
-    const double phi = (1.0 + sqrt(5.0)) / 2.0;
-    const double inv_norm = 1.0 / sqrt(1 + phi * phi);
+	using std::numbers::phi;
 
-    p.vertices = {
-        {0, -1 * inv_norm,  phi * inv_norm, 0, false},
-        {1,  1 * inv_norm,  phi * inv_norm, 0, false},
-        {2, -1 * inv_norm, -phi * inv_norm, 0, false},
-        {3,  1 * inv_norm, -phi * inv_norm, 0, false},
-        {4, 0, -1 * inv_norm,  phi * inv_norm, false},
-        {5, 0,  1 * inv_norm,  phi * inv_norm, false},
-        {6, 0, -1 * inv_norm, -phi * inv_norm, false},
-        {7, 0,  1 * inv_norm, -phi * inv_norm, false},
-        {8,  phi * inv_norm, 0, -1 * inv_norm, false},
-        {9,  phi * inv_norm, 0,  1 * inv_norm, false},
-        {10, -phi * inv_norm, 0, -1 * inv_norm, false},
-        {11, -phi * inv_norm, 0,  1 * inv_norm, false}
+	P.vertices = {
+        {0, -1, phi, 0, false},
+        {1, 1, phi, 0, false},
+        {2, -1, -phi, 0, false},
+        {3, 1, -phi, 0, false},
+        {4, 0, -1, phi, false},
+        {5, 0, 1, phi, false},
+        {6, 0, -1, -phi, false},
+        {7, 0, 1, -phi, false},
+        {8, phi, 0, -1, false},
+        {9, phi, 0, 1, false},
+        {10, -phi, 0, -1, false},
+        {11, -phi, 0, 1, false}
     };
 
-    p.edges = {
-        {0, 0, 1, false}, {1, 0, 5, false}, {2, 0, 7, false}, {3, 0, 10, false}, {4, 0, 11, false},
-        {5, 1, 5, false}, {6, 1, 7, false}, {7, 1, 8, false}, {8, 1, 9, false}, {9, 2, 3, false},
-        {10, 2, 4, false}, {11, 2, 6, false}, {12, 2, 10, false}, {13, 2, 11, false}, {14, 3, 4, false},
-        {15, 3, 6, false}, {16, 3, 8, false}, {17, 3, 9, false}, {18, 4, 6, false}, {19, 4, 10, false},
-        {20, 5, 9, false}, {21, 5, 11, false}, {22, 6, 10, false}, {23, 6, 11, false}, {24, 7, 8, false},
-        {25, 7, 9, false}, {26, 8, 9, false}, {27, 10, 11, false}
+    for (Vertex& v : P.vertices) {
+        normalize(v);
+    }
+
+    P.edges = {
+        {0, 0, 5, false}, {1, 0, 1, false}, {2, 0, 11, false}, {3, 0, 10, false}, {4, 0, 7, false},
+        {5, 1, 5, false}, {6, 1, 7, false}, {7, 1, 8, false}, {8, 1, 9, false}, {9, 5, 9, false},
+        {10, 5, 11, false}, {11, 9, 8, false}, {12, 8, 7, false}, {13, 9, 4, false}, {14, 9, 3, false},
+        {15, 4, 3, false}, {16, 5, 4, false}, {17, 4, 11, false}, {18, 2, 4, false}, {19, 2, 11, false},
+        {20, 2, 3, false}, {21, 2, 6, false}, {22, 6, 3, false}, {23, 8, 3, false}, {24, 8, 6, false},
+        {25, 7, 6, false}, {26, 2, 10, false}, {27, 10, 6, false}, {28, 10, 7, false}, {29, 11, 10, false}
     };
 
-    p.faces = {
-        {0, {p.vertices[0], p.vertices[1], p.vertices[5]}, {p.edges[0], p.edges[5], p.edges[1]}},
-        {1, {p.vertices[0], p.vertices[5], p.vertices[11]}, {p.edges[1], p.edges[21], p.edges[4]}},
-        {2, {p.vertices[0], p.vertices[11], p.vertices[10]}, {p.edges[4], p.edges[27], p.edges[3]}},
-        {3, {p.vertices[0], p.vertices[10], p.vertices[2]}, {p.edges[3], p.edges[12], p.edges[12]}},
-        {4, {p.vertices[0], p.vertices[2], p.vertices[7]}, {p.edges[12], p.edges[2], p.edges[2]}},
-        {5, {p.vertices[0], p.vertices[7], p.vertices[1]}, {p.edges[2], p.edges[6], p.edges[0]}},
-        {6, {p.vertices[1], p.vertices[7], p.vertices[8]}, {p.edges[6], p.edges[24], p.edges[7]}},
-        {7, {p.vertices[1], p.vertices[8], p.vertices[9]}, {p.edges[7], p.edges[26], p.edges[8]}},
-        {8, {p.vertices[1], p.vertices[9], p.vertices[5]}, {p.edges[8], p.edges[20], p.edges[5]}},
-        {9, {p.vertices[2], p.vertices[10], p.vertices[4]}, {p.edges[12], p.edges[19], p.edges[10]}},
-        {10, {p.vertices[2], p.vertices[4], p.vertices[6]}, {p.edges[10], p.edges[18], p.edges[11]}},
-        {11, {p.vertices[2], p.vertices[6], p.vertices[3]}, {p.edges[11], p.edges[15], p.edges[9]}},
-        {12, {p.vertices[2], p.vertices[3], p.vertices[8]}, {p.edges[9], p.edges[16], p.edges[7]}},
-        {13, {p.vertices[2], p.vertices[8], p.vertices[7]}, {p.edges[7], p.edges[24], p.edges[2]}},
-        {14, {p.vertices[3], p.vertices[6], p.vertices[4]}, {p.edges[15], p.edges[18], p.edges[14]}},
-        {15, {p.vertices[3], p.vertices[4], p.vertices[9]}, {p.edges[14], p.edges[19], p.edges[17]}},
-        {16, {p.vertices[3], p.vertices[9], p.vertices[8]}, {p.edges[17], p.edges[26], p.edges[16]}},
-        {17, {p.vertices[4], p.vertices[10], p.vertices[11]}, {p.edges[19], p.edges[27], p.edges[13]}},
-        {18, {p.vertices[4], p.vertices[11], p.vertices[5]}, {p.edges[13], p.edges[21], p.edges[1]}},
-        {19, {p.vertices[4], p.vertices[5], p.vertices[9]}, {p.edges[1], p.edges[20], p.edges[15]}}
-    };
+	// Set values of faces
+	P.faces = {
+		{0, {P.vertices[5], P.vertices[0], P.vertices[11]}, {P.edges[0], P.edges[2], P.edges[10]}},
+		{1, {P.vertices[0], P.vertices[5], P.vertices[1]}, {P.edges[0], P.edges[5], P.edges[1]}},
+		{2, {P.vertices[5], P.vertices[1], P.vertices[9]}, {P.edges[5], P.edges[8], P.edges[9]}},
+		{3, {P.vertices[5], P.vertices[4], P.vertices[9]}, {P.edges[16], P.edges[13], P.edges[9]}},
+		{4, {P.vertices[4], P.vertices[5], P.vertices[11]}, {P.edges[16], P.edges[10], P.edges[17]}},
+		{5, {P.vertices[4], P.vertices[3], P.vertices[9]}, {P.edges[15], P.edges[14], P.edges[13]}},
+		{6, {P.vertices[4], P.vertices[11], P.vertices[2]}, {P.edges[17], P.edges[19], P.edges[18]}},
+		{7, {P.vertices[2], P.vertices[3], P.vertices[6]}, {P.edges[20], P.edges[22], P.edges[21]}},
+		{8, {P.vertices[6], P.vertices[2], P.vertices[10]}, {P.edges[21], P.edges[26], P.edges[27]}},
+		{9, {P.vertices[3], P.vertices[8], P.vertices[6]}, {P.edges[23], P.edges[24], P.edges[22]}},
+		{10, {P.vertices[8], P.vertices[9], P.vertices[3]}, {P.edges[11], P.edges[14], P.edges[23]}},
+		{11, {P.vertices[9], P.vertices[8], P.vertices[1]}, {P.edges[11], P.edges[7], P.edges[8]}},
+		{12, {P.vertices[8], P.vertices[7], P.vertices[1]}, {P.edges[12], P.edges[6], P.edges[7]}},
+		{13, {P.vertices[6], P.vertices[7], P.vertices[8]}, {P.edges[25], P.edges[12], P.edges[24]}},
+		{14, {P.vertices[7], P.vertices[10], P.vertices[6]}, {P.edges[28], P.edges[27], P.edges[25]}},
+		{15, {P.vertices[7], P.vertices[10], P.vertices[0]}, {P.edges[28], P.edges[3], P.edges[4]}},
+		{16, {P.vertices[0], P.vertices[10], P.vertices[11]}, {P.edges[3], P.edges[29], P.edges[2]}},
+		{17, {P.vertices[4], P.vertices[2], P.vertices[3]}, {P.edges[18], P.edges[20], P.edges[15]}},
+		{18, {P.vertices[1], P.vertices[0], P.vertices[7]}, {P.edges[1], P.edges[4], P.edges[6]}},
+		{19, {P.vertices[11], P.vertices[2], P.vertices[10]}, {P.edges[19], P.edges[26], P.edges[29]}}
+	};
 
-    return p;
+	return P;
 }
 
 // function that computes the distance of a vertex from origin
