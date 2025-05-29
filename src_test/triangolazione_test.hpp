@@ -12,7 +12,6 @@ TEST(TriangolazioneTest, SuddivisioneTetraedro) {
 
     // Applica la suddivisione
     Polyhedron p_triangolato = triangolazione(p, b);
-
     // Il tetraedro ha 4 facce, quindi ci aspettiamo 4 * 4 = 16 facce
     EXPECT_EQ(p_triangolato.faces.size(), 16);
 

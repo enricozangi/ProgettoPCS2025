@@ -28,6 +28,3 @@ void exportVertices(const vector<Vertex>& vertices);
 void exportEdges(const vector<Edge>& edges);
 void exportFaces(const vector<Face>& faces);
 void exportPolyhedra(const Polyhedron& p);
-
-
-

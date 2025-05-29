@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 using namespace std;
 using namespace polyhedron_library;
@@ -36,6 +37,10 @@ int main()
     // create output files
 
     int q = quadrupla[1];
+    int b;
+
+    if(quadrupla[2] > 0) b = quadrupla[2];
+    else if(quadrupla[3] > 0) b = quadrupla[3];
 
     Polyhedron solid;
 
@@ -60,7 +65,7 @@ int main()
         return 1;
     }
 
-    Polyhedron geodetic = triangolazione(solid, 3);
+    Polyhedron geodetic = triangolazione(solid, b);
 
     exportVertices(geodetic.vertices);
     exportEdges(geodetic.edges);
@@ -68,8 +73,7 @@ int main()
     exportPolyhedra(geodetic);
 
     
-    
-    
+
     return 0;
 
 }

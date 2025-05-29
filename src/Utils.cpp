@@ -198,13 +198,15 @@ Vertex normalize(const Vertex& v)
 void exportVertices(const vector<Vertex>& vertices)
 {
 
-    ofstream outFile("Cell0Ds.txt");
+    ofstream outFile("../ListPolygons/Cell0Ds.txt");
 
     if (!outFile)
     {
         cerr << "file not found" << endl;
         return;
     }
+
+    outFile << "id;x;y;z;\n";
 
     for(const Vertex& v : vertices)
     {
@@ -220,13 +222,15 @@ void exportVertices(const vector<Vertex>& vertices)
 void exportEdges(const vector<Edge>& edges)
 {
 
-    ofstream outFile("Cell1Ds.txt");
+    ofstream outFile("../ListPolygons/Cell1Ds.txt");
 
     if (!outFile)
     {
         cerr << "file not found" << endl;
         return;
     }
+
+    outFile << "id;origin;end;\n";
 
     for(const Edge& e : edges)
     {
@@ -240,13 +244,15 @@ void exportEdges(const vector<Edge>& edges)
 
 void exportFaces(const vector<Face>& faces)
 {
-    ofstream outFile("Cell2Ds.txt");
+    ofstream outFile("../ListPolygons/Cell2Ds.txt");
 
     if (!outFile)
     {
         cerr << "file not found" << endl;
         return;
     }
+
+    outFile << "id;vertices;edges;\n";
 
     for(const Face& f : faces)
     {
@@ -273,7 +279,7 @@ void exportFaces(const vector<Face>& faces)
 
 void exportPolyhedra(const Polyhedron& p)
 {
-    ofstream outFile("Cell3Ds.txt");
+    ofstream outFile("../ListPolygons/Cell3Ds.txt");
 
     if (!outFile)
     {
@@ -281,6 +287,7 @@ void exportPolyhedra(const Polyhedron& p)
         return;
     }
 
+    outFile << "id;vertices;edges;faces;\n";
     outFile << p.id << ";";
 
     for (size_t i = 0; i < p.vertices.size(); ++i)
