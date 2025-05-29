@@ -6,8 +6,8 @@
 #include "Utils.hpp"
 
 using namespace std;
+using namespace polyhedron_library;
 
-namespace polyhedron_library {
 
 int insertVertex(vector<Vertex>& newVertices, map<vector<double>, int>& vertexMap,
                  double x, double y, double z, int& nextVertexId) {
@@ -100,6 +100,4 @@ Polyhedron suddividiTutteLeFacce(Polyhedron poly, int b) {
 
     return poly;
 }
-
-}  // namespace polyhedron_library
 

@@ -1,6 +1,9 @@
+#include <iostream>
+#include <fstream>
+#include <cmath>
+
 #include "Utils.hpp"
 #include "polyhedron_library.hpp"
-#include <cmath>
 
 using namespace std;
 using namespace polyhedron_library;
@@ -189,3 +192,118 @@ Vertex normalize(const Vertex& v)
 
     return {v.id, v.x / norm_v, v.y / norm_v, v.z / norm_v, false};
 };
+
+// Cell0Ds.txt (vertices)
+
+void exportVertices(const vector<Vertex>& vertices)
+{
+
+    ofstream outFile("Cell0Ds.txt");
+
+    if (!outFile)
+    {
+        cerr << "file not found" << endl;
+        return;
+    }
+
+    for(const Vertex& v : vertices)
+    {
+        outFile << v.id << ";" << v.x << ";" << v.y << ";" << v.z << ";\n";
+    }
+
+
+    outFile.close();
+}
+
+    // Cell1Ds.txt (edges)
+
+void exportEdges(const vector<Edge>& edges)
+{
+
+    ofstream outFile("Cell1Ds.txt");
+
+    if (!outFile)
+    {
+        cerr << "file not found" << endl;
+        return;
+    }
+
+    for(const Edge& e : edges)
+    {
+        outFile << e.id << ";" << e.origin << ";" << e.end << ";\n";
+    }
+
+    outFile.close();
+}
+
+    // Cell2Ds.txt (faces)
+
+void exportFaces(const vector<Face>& faces)
+{
+    ofstream outFile("Cell2Ds.txt");
+
+    if (!outFile)
+    {
+        cerr << "file not found" << endl;
+        return;
+    }
+
+    for(const Face& f : faces)
+    {
+        outFile << faces.id << ";";
+
+        for (size_t i = 0; i < f.vertices.size(); ++i)
+        {
+            outFile << f.vertices[i].id;
+            if (i < f.vertices.size() - 1) outFile << ",";
+        }
+        outFile << ";";
+
+        for (size_t i = 0; i < f.edges.size(); ++i)
+        {
+            outFile << f.edges[i].id;
+            if (i < f.edges.size() - 1) outFile << ",";
+        }
+        outFile << ";\n";
+    }
+
+    outFile.close();
+}
+
+    // Cell3Ds.txt (polyhedra)
+
+void exportPolyhedra(const Polyhedron& p)
+{
+    ofstream outFile("Cell3Ds.txt");
+
+    if (!outFile)
+    {
+        cerr << "file not found" << endl;
+        return;
+    }
+
+    outFile << p.id << ";";
+
+    for (size_t i = 0; i < p.vertices.size(); ++i)
+    {
+        outFile << p.vertices[i].id;
+        if (i < p.vertices.size() - 1) outFile << ",";
+    }
+    outFile << ";";
+
+    for (size_t i = 0; i < p.edges.size(); ++i)
+    {
+        outFile << p.edges[i].id;
+        if (i < p.edges.size() - 1) outFile << ",";
+    }
+    outFile << ";";
+
+    for (size_t i = 0; i < p.faces.size(); ++i)
+    {
+        outFile << p.faces[i].id;
+        if (i < p.faces.size() - 1) outFile << ",";
+    }
+    outFile << ";\n";
+
+    outFile.close();
+}
