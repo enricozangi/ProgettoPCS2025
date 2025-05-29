@@ -1,45 +1,75 @@
-#include <iostream>
+#pragma once
+
 #include <vector>
 #include <cmath>
-#include <unordered_map>
+#include <map>
 #include "polyhedron_library.hpp"
-#include "Utils.hpp"
 
 using namespace std;
+using namespace polyhedron_library;
 
 namespace polyhedron_library {
 
-int insertVertex(vector<Vertex>& newVertices, map<vector<double>, int>& vertexMap,
-                 double x, double y, double z, int& nextVertexId) {
-    vector<double> key = { x, y, z };
-    if (vertexMap.find(key) != vertexMap.end()) {
-        return vertexMap[key];
-    }
-    else {
-        int id = nextVertexId++;
-        newVertices.push_back({ id, x, y, z, false });
-        vertexMap[key] = id;
-        return id;
-    }
+// Confronta due vertici con tolleranza
+bool arePointsEqual(const Vertex& v1, const Vertex& v2, double epsilon = 1e-8) {
+    return fabs(v1.x - v2.x) < epsilon &&
+           fabs(v1.y - v2.y) < epsilon &&
+           fabs(v1.z - v2.z) < epsilon;
 }
 
-Polyhedron suddividiTutteLeFacce(Polyhedron poly, int b) {
-    int nextVertexId = poly.numVertices();
-    int nextEdgeId = poly.numEdges();
+// Calcola la distanza euclidea tra due vertici
+double distance(const Vertex& v1, const Vertex& v2) {
+    return sqrt(pow(v1.x - v2.x, 2) +
+                pow(v1.y - v2.y, 2) +
+                pow(v1.z - v2.z, 2));
+}
 
-    map<vector<double>, int> vertexMap;
-    for (const auto& v : poly.vertices) {
-        vertexMap[{v.x, v.y, v.z}] = v.id;
+// Inserisce un nuovo vertice, evitando duplicati
+int insertVertex(vector<Vertex>& vertices, double x, double y, double z, int& nextVertexId) {
+    Vertex newV{ -1, x, y, z, false };
+
+    for (const auto& v : vertices) {
+        if (arePointsEqual(v, newV)) {
+            return v.id;
+        }
     }
 
-    vector<Vertex> newVertices = poly.vertices;
-    vector<Edge> newEdges = poly.edges;
+    int id = nextVertexId++;
+    vertices.push_back({ id, x, y, z, false });
+    return id;
+}
 
-    for (const Face& face : poly.faces) {
-        Vertex A = face.vertices[0];
-        Vertex B = face.vertices[1];
-        Vertex C = face.vertices[2];
+// Funzione principale
+Polyhedron suddividiTutteLeFacce(const Polyhedron& poly, int b) {
+    Polyhedron newPoly;
+    newPoly.id = poly.id;
 
+    int nextVertexId = 0;
+    int nextEdgeId = 0;
+    double epsilon = 1e-8;
+
+    // Copia i vertici originali
+    for (const auto& v : poly.vertices) {
+        newPoly.vertices.push_back({ nextVertexId++, v.x, v.y, v.z, false });
+    }
+
+    // Calcola passo p (usiamo primo edge A-B)
+    const Vertex& A = poly.vertices[0];
+    const Vertex& B = poly.vertices[1];
+    double p = distance(A, B) / b;
+
+    // Mappa per evitare duplicati (chiave = pair(min, max), valore = bool)
+    map<pair<int, int>, bool> edgeMap;
+
+    // Ciclo sulle facce
+    for (const auto& face : poly.faces) {
+        const Vertex& A = poly.vertices[face.vertices[0].id];
+        const Vertex& B = poly.vertices[face.vertices[1].id];
+        const Vertex& C = poly.vertices[face.vertices[2].id];
+
+        vector<int> faceVertexIds;
+
+        // Genera nuovi vertici sulla faccia
         for (int i = 0; i <= b; ++i) {
             for (int j = 0; j <= b - i; ++j) {
                 double u = double(i) / b;
@@ -50,56 +80,33 @@ Polyhedron suddividiTutteLeFacce(Polyhedron poly, int b) {
                 double y = u * A.y + v * B.y + w * C.y;
                 double z = u * A.z + v * B.z + w * C.z;
 
-                insertVertex(newVertices, vertexMap, x, y, z, nextVertexId);
+                int vid = insertVertex(newPoly.vertices, x, y, z, nextVertexId);
+                faceVertexIds.push_back(vid);
             }
         }
 
-        for (int i = 0; i <= b; ++i) {
-            for (int j = 0; j <= b - i; ++j) {
-                int id1 = insertVertex(newVertices, vertexMap,
-                    (double(i) / b) * A.x + (double(j) / b) * B.x + (1.0 - double(i)/b - double(j)/b) * C.x,
-                    (double(i) / b) * A.y + (double(j) / b) * B.y + (1.0 - double(i)/b - double(j)/b) * C.y,
-                    (double(i) / b) * A.z + (double(j) / b) * B.z + (1.0 - double(i)/b - double(j)/b) * C.z,
-                    nextVertexId
-                );
+        // Genera edges locali sulla faccia
+        for (size_t i = 0; i < faceVertexIds.size(); ++i) {
+            for (size_t j = i + 1; j < faceVertexIds.size(); ++j) {
+                int vi = faceVertexIds[i];
+                int vj = faceVertexIds[j];
 
-                if (i < b) { // questo ciclo collega il vertice con quello alla sua destra se i<b
-                    int id2 = insertVertex(newVertices, vertexMap,
-                        (double(i + 1) / b) * A.x + (double(j) / b) * B.x + (1.0 - double(i + 1)/b - double(j)/b) * C.x,
-                        (double(i + 1) / b) * A.y + (double(j) / b) * B.y + (1.0 - double(i + 1)/b - double(j)/b) * C.y,
-                        (double(i + 1) / b) * A.z + (double(j) / b) * B.z + (1.0 - double(i + 1)/b - double(j)/b) * C.z,
-                        nextVertexId
-                    );
-                    newEdges.push_back({ nextEdgeId++, id1, id2, false });
-                }
-                if (j < b) { // questo if collega il vertice con quello in obliquo a sinistra
-                    int id3 = insertVertex(newVertices, vertexMap,
-                        (double(i) / b) * A.x + (double(j + 1) / b) * B.x + (1.0 - double(i)/b - double(j + 1)/b) * C.x,
-                        (double(i) / b) * A.y + (double(j + 1) / b) * B.y + (1.0 - double(i)/b - double(j + 1)/b) * C.y,
-                        (double(i) / b) * A.z + (double(j + 1) / b) * B.z + (1.0 - double(i)/b - double(j + 1)/b) * C.z,
-                        nextVertexId
-                    );
-                    newEdges.push_back({ nextEdgeId++, id1, id3, false });
-                }
+                double d = distance(newPoly.vertices[vi], newPoly.vertices[vj]);
+                if (fabs(d - p) < epsilon) {
+                    int min_id = min(vi, vj);
+                    int max_id = max(vi, vj);
 
-                if (i < b && j < b) { //questo if collega il vertice con quello in obliquo a destra
-                    int id4 = insertVertex(newVertices, vertexMap,
-                        (double(i + 1) / b) * A.x + (double(j + 1) / b) * B.x + (1.0 - double(i + 1)/b - double(j + 1)/b) * C.x,
-                        (double(i + 1) / b) * A.y + (double(j + 1) / b) * B.y + (1.0 - double(i + 1)/b - double(j + 1)/b) * C.y,
-                        (double(i + 1) / b) * A.z + (double(j + 1) / b) * B.z + (1.0 - double(i + 1)/b - double(j + 1)/b) * C.z,
-                        nextVertexId
-                    );
-                    newEdges.push_back({ nextEdgeId++, id1, id4, false });
+                    // Aggiungi edge solo se non già presente
+                    if (edgeMap.find({min_id, max_id}) == edgeMap.end()) {
+                        newPoly.edges.push_back({ nextEdgeId++, min_id, max_id, false });
+                        edgeMap[{min_id, max_id}] = true;
+                    }
                 }
             }
         }
     }
 
-    poly.vertices = newVertices;
-    poly.edges = newEdges;
-
-    return poly;
+    return newPoly;
 }
 
-}  // namespace polyhedron_library
-
+} // namespace polyhedron_library
