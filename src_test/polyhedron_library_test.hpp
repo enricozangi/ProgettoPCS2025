@@ -49,6 +49,7 @@ TEST(isValidTest, MismatchedListsTest)
     EXPECT_FALSE(face2.isValid());
 }
 */
+
 TEST(isValidTest, DiscontinuityTest)
 {
     vector<Vertex> vertices_list = {
@@ -130,8 +131,7 @@ TEST(SortTest, SortEdgesTest)
 
         for (size_t i = 0; i < sorted.size() - 1; ++i)
         {
-            EXPECT_EQ(sorted[i].end, sorted[(i + 1) % E].origin)
-             << "Error between edge " << i << " and " << (i + 1) % E << " of face " << j << endl;
+            EXPECT_EQ(sorted[i].end, sorted[(i + 1) % E].origin) << "Error between edge " << i << " and " << (i + 1) % E << " of face " << j << endl;
         }
     }
 }

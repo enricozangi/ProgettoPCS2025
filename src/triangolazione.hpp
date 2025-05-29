@@ -3,12 +3,11 @@
 #include <vector>
 #include <cmath>
 #include <map>
+#include <algorithm>
 #include "polyhedron_library.hpp"
 
 using namespace std;
 using namespace polyhedron_library;
-
-namespace polyhedron_library {
 
 // Confronta due vertici con tolleranza
 bool arePointsEqual(const Vertex& v1, const Vertex& v2, double epsilon = 1e-8) {
@@ -39,14 +38,25 @@ int insertVertex(vector<Vertex>& vertices, double x, double y, double z, int& ne
     return id;
 }
 
+// Crea una chiave ordinata per la faccia
+string faceKey(int v1, int v2, int v3) {
+    vector<int> ids = {v1, v2, v3};
+    sort(ids.begin(), ids.end());
+    return to_string(ids[0]) + "-" + to_string(ids[1]) + "-" + to_string(ids[2]);
+}
+
 // Funzione principale
-Polyhedron suddividiTutteLeFacce(const Polyhedron& poly, int b) {
+Polyhedron triangolazione(const Polyhedron& poly, int b) {
     Polyhedron newPoly;
     newPoly.id = poly.id;
 
     int nextVertexId = 0;
     int nextEdgeId = 0;
+    int nextFaceId = 0;
     double epsilon = 1e-8;
+
+    map<pair<int, int>, bool> edgeMap;
+    map<string, bool> faceMap;
 
     // Copia i vertici originali
     for (const auto& v : poly.vertices) {
@@ -58,9 +68,6 @@ Polyhedron suddividiTutteLeFacce(const Polyhedron& poly, int b) {
     const Vertex& B = poly.vertices[1];
     double p = distance(A, B) / b;
 
-    // Mappa per evitare duplicati (chiave = pair(min, max), valore = bool)
-    map<pair<int, int>, bool> edgeMap;
-
     // Ciclo sulle facce
     for (const auto& face : poly.faces) {
         const Vertex& A = poly.vertices[face.vertices[0].id];
@@ -68,6 +75,7 @@ Polyhedron suddividiTutteLeFacce(const Polyhedron& poly, int b) {
         const Vertex& C = poly.vertices[face.vertices[2].id];
 
         vector<int> faceVertexIds;
+        vector<Edge> localEdges;  // svuotato a ogni faccia
 
         // Genera nuovi vertici sulla faccia
         for (int i = 0; i <= b; ++i) {
@@ -85,7 +93,7 @@ Polyhedron suddividiTutteLeFacce(const Polyhedron& poly, int b) {
             }
         }
 
-        // Genera edges locali sulla faccia
+        // Genera edges locali sulla faccia e li registra anche localmente
         for (size_t i = 0; i < faceVertexIds.size(); ++i) {
             for (size_t j = i + 1; j < faceVertexIds.size(); ++j) {
                 int vi = faceVertexIds[i];
@@ -96,10 +104,52 @@ Polyhedron suddividiTutteLeFacce(const Polyhedron& poly, int b) {
                     int min_id = min(vi, vj);
                     int max_id = max(vi, vj);
 
-                    // Aggiungi edge solo se non già presente
                     if (edgeMap.find({min_id, max_id}) == edgeMap.end()) {
-                        newPoly.edges.push_back({ nextEdgeId++, min_id, max_id, false });
+                        newPoly.edges.push_back({ nextEdgeId, min_id, max_id, false });
                         edgeMap[{min_id, max_id}] = true;
+                    }
+
+                    localEdges.push_back({ -1, min_id, max_id, false });  // ID -1: solo per confronto locale
+                }
+            }
+        }
+
+        // Trova le facce locali combinando 3 edges
+        for (size_t i = 0; i < localEdges.size(); ++i) {
+            for (size_t j = i + 1; j < localEdges.size(); ++j) {
+                for (size_t k = j + 1; k < localEdges.size(); ++k) {
+                    const Edge& e1 = localEdges[i];
+                    const Edge& e2 = localEdges[j];
+                    const Edge& e3 = localEdges[k];
+
+                    map<int, int> vertexCount;
+                    vertexCount[e1.origin]++;
+                    vertexCount[e1.end]++;
+                    vertexCount[e2.origin]++;
+                    vertexCount[e2.end]++;
+                    vertexCount[e3.origin]++;
+                    vertexCount[e3.end]++;
+
+                    vector<int> faceVertices;
+                    for (const auto& [vid, count] : vertexCount) {
+                        if (count == 2) {
+                            faceVertices.push_back(vid);
+                        }
+                    }
+
+                    if (faceVertices.size() == 3) {
+                        string key = faceKey(faceVertices[0], faceVertices[1], faceVertices[2]);
+
+                        if (faceMap.find(key) == faceMap.end()) {
+                            newPoly.faces.push_back({
+                                nextFaceId++,
+                                { newPoly.vertices[faceVertices[0]],
+                                  newPoly.vertices[faceVertices[1]],
+                                  newPoly.vertices[faceVertices[2]] },
+                                { e1, e2, e3 }
+                            });
+                            faceMap[key] = true;
+                        }
                     }
                 }
             }
@@ -108,5 +158,3 @@ Polyhedron suddividiTutteLeFacce(const Polyhedron& poly, int b) {
 
     return newPoly;
 }
-
-} // namespace polyhedron_library

@@ -1,5 +1,7 @@
 list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/polyhedron_library.hpp)
 list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Utils.hpp)
+list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/triangolazione.hpp)
+
 
 list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Utils.cpp)
 
