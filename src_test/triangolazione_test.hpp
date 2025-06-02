@@ -28,3 +28,45 @@ TEST(TriangolazioneTest, SuddivisioneTetraedro) {
 
     EXPECT_EQ(p_triangolato2.edges.size(), 54);
 }
+
+TEST(TriangolazioneTest, numTestq3)
+{
+    Polyhedron p = tetraedro();
+    int c = 0;
+    for (int b = 1; b <= 3; ++b) {
+        int T = b * b + c * b + c * c;
+        Polyhedron p_triangolato = triangolazione(p, b);
+
+        EXPECT_EQ(2 * T + 2, p_triangolato.numVertices()) << "Failed for b = " << b;
+        EXPECT_EQ(6 * T, p_triangolato.numEdges()) << "Failed for b = " << b;
+        EXPECT_EQ(4 * T, p_triangolato.numFaces()) << "Failed for b = " << b;
+    }
+}
+TEST(TriangolazioneTest, numTestq4)
+{
+    Polyhedron p = ottaedro();
+    int c = 0;
+    for (int b = 1; b <= 3; ++b) {
+        int T = b * b + c * b + c * c;
+        Polyhedron p_triangolato = triangolazione(p, b);
+
+        EXPECT_EQ(4 * T + 2, p_triangolato.numVertices()) << "Failed for b = " << b;
+        EXPECT_EQ(12 * T, p_triangolato.numEdges()) << "Failed for b = " << b;
+        EXPECT_EQ(8 * T, p_triangolato.numFaces()) << "Failed for b = " << b;
+    }
+}
+TEST(TriangolazioneTest, numTestq5)
+{
+    Polyhedron p = icosaedro();
+    int c = 0;
+    for (int b = 1; b <= 3; ++b) {
+        int T = b * b + c * b + c * c;
+        Polyhedron p_triangolato = triangolazione(p, b);
+
+        EXPECT_EQ(10 * T + 2, p_triangolato.numVertices()) << "Failed for b = " << b;
+        EXPECT_EQ(30 * T, p_triangolato.numEdges()) << "Failed for b = " << b;
+        EXPECT_EQ(20 * T, p_triangolato.numFaces()) << "Failed for b = " << b;
+    }
+}
+
+// Aggiungere test su valenza dei vertici

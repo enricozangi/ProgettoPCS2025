@@ -2,8 +2,11 @@
 #include <fstream>
 #include <cmath>
 #include <Eigen/Eigen>
+#include <map>
+#include <set>
+#include <algorithm>
+#include <numeric>
 #include "UCDUtilities.hpp"
-
 #include "Utils.hpp"
 #include "polyhedron_library.hpp"
 
@@ -115,7 +118,7 @@ Polyhedron icosaedro()
 	Polyhedron P;
 	P.id = 2;
 
-	using std::numbers::phi;
+    using numbers::phi;
 
 	P.vertices = {
         {0, -1, phi, 0, false},
@@ -342,13 +345,140 @@ void exportParaview(const Polyhedron& p)
         Cell1Ds(1, id) = e.end;
     }
 
-    // Export in the correct format
     Gedim::UCDUtilities utilities;
-    utilities.ExportPoints("../ListPolygons/Cell0Ds.inp",
-                           Cell0Ds);
+    utilities.ExportPoints("../ListPolygons/Cell0Ds.inp", Cell0Ds);
 
-    utilities.ExportSegments("../ListPolygons/Cell1Ds.inp",
-                             Cell0Ds,
-                             Cell1Ds);
+    utilities.ExportSegments("../ListPolygons/Cell1Ds.inp", Cell0Ds, Cell1Ds);
 
+}
+
+// Dual polyhedra  
+
+// function to compute the centroid of a face
+
+Vertex faceCentroid(const Face& f, int id)
+{
+    double x = 0, y = 0, z = 0;
+    for (const auto& v : f.vertices) {
+        x += v.x;
+        y += v.y;
+        z += v.z;
+    }
+    int n = f.vertices.size();
+    return Vertex{id, x / n, y / n, z / n, false};
+}
+
+// function to check if two faces share a common edge
+
+bool haveCommonEdge(const Face& f1, const Face& f2)
+{
+    for (const auto& e1 : f1.edges) {
+        for (const auto& e2 : f2.edges) {
+            if (e1.id == e2.id) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// function to find adjacent faces of a given face in a polyhedron
+
+vector<Face> facceAdiacenti(const Polyhedron& p, const Face& f)
+{
+    vector<Face> adiacenti;
+    for (const auto& other : p.faces)
+    {
+        if (other.id != f.id)
+        {
+            if (haveCommonEdge(f, other))
+            {
+                adiacenti.push_back(other);
+            }
+        }
+    }
+    return adiacenti;
+}
+
+// function to create the dual polyhedron of a given polyhedron
+
+Polyhedron dualPolyhedron(const Polyhedron& p)
+{
+    Polyhedron dual;
+    dual.id = p.id + 1;
+
+    // create vertices of the Goldberg polyhedron
+    for(const auto& f : p.faces)
+    {
+        Vertex centroid = faceCentroid(f, f.id);
+        dual.vertices.push_back(centroid);
+    }
+
+    // create edges of the Goldberg polyhedron
+    for(const auto& f : p.faces)
+    {
+        vector<Face> adj = facceAdiacenti(p, f);
+        for(const auto& a : adj)
+        {
+            Edge e = {-1, f.id, a.id, false};
+            bool alreadyExists = false;
+            for (const auto& existingEdge : dual.edges) {
+                if ((existingEdge.origin == f.id && existingEdge.end == a.id) ||
+                    (existingEdge.origin == a.id && existingEdge.end == f.id)) {
+                    alreadyExists = true;
+                    break;
+                }
+            }
+            if (!alreadyExists) {
+                e.id = dual.edges.size();
+                dual.edges.push_back(e);
+            }
+        }
+    }
+
+    // create faces of the Goldberg polyhedron
+    
+    // Ogni vertice del poliedro originale corrisponde a una faccia del duale.
+    // Per ogni vertice, trova tutte le facce che lo contengono e crea una faccia del duale
+    for (const auto& v : p.vertices) {
+        std::vector<Vertex> dualFaceVertices;
+        std::vector<Edge> dualFaceEdges;
+        std::vector<int> faceIds;
+
+        // Trova tutte le facce che contengono il vertice v
+        for (const auto& f : p.faces) {
+            for (const auto& fv : f.vertices) {
+                if (fv.id == v.id) {
+                    dualFaceVertices.push_back(dual.vertices[f.id]);
+                    faceIds.push_back(f.id);
+                    break;
+                }
+            }
+        }
+
+        // Ordina i centroidi in senso antiorario rispetto al vertice originale (opzionale, qui lasciato come trovato)
+        // Crea gli edge della faccia duale
+        for (size_t i = 0; i < faceIds.size(); ++i) {
+            int from = faceIds[i];
+            int to = faceIds[(i + 1) % faceIds.size()];
+            // Trova l'edge corrispondente
+            for (const auto& e : dual.edges) {
+                if ((e.origin == from && e.end == to) || (e.origin == to && e.end == from)) {
+                    dualFaceEdges.push_back(e);
+                    break;
+                }
+            }
+        }
+
+        Face dualFace;
+        dualFace.id = dual.faces.size();
+        dualFace.vertices = dualFaceVertices;
+        dualFace.edges = dualFaceEdges;
+        dual.faces.push_back(dualFace);
+    }
+    for(Vertex& v : dual.vertices)
+    {
+        normalize(v);
+    }
+    return dual;
 }

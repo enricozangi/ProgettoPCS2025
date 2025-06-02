@@ -32,3 +32,7 @@ void exportPolyhedra(const Polyhedron& p);
 // export in Paraview
 
 void exportParaview(const Polyhedron& p);
+
+// dual polyhedra
+
+Polyhedron dualPolyhedron(const Polyhedron& p);

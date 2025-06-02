@@ -77,8 +77,15 @@ int main()
     exportFaces(geodetic.faces);
     exportParaview(geodetic);
 
-    exportParaview(geodetic);
+    exportParaview(geodetic);    // verifica compatibilità con file .inp
 
+    Polyhedron goldberg = dualPolyhedron(geodetic);
+    exportVertices(goldberg.vertices);
+    exportEdges(goldberg.edges);
+    exportFaces(goldberg.faces);
+    exportPolyhedra(goldberg);
+
+    exportParaview(goldberg);
     return 0;
 
 }

@@ -45,3 +45,13 @@ TEST(NormalizeTest, ZeroNorm)
     normalize(v);
     EXPECT_NEAR(norm(v), 0.0, 1e-3);
 }
+
+TEST(DualTest, Goldberg)
+{
+    Polyhedron p = tetraedro();
+    Polyhedron g = dualPolyhedron(p);
+    EXPECT_TRUE(g.isValid());
+    EXPECT_EQ(g.numVertices(), p.numFaces()) << "mismatch between vertices and faces";
+    EXPECT_EQ(g.numEdges(), p.numEdges()) << "mismatch bitween edges";
+    EXPECT_EQ(g.numFaces(), p.numVertices()) << "mismatch between faces and vertices";
+}
