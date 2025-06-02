@@ -35,13 +35,13 @@ TEST(PolyTest, IcosahedronTest)
 TEST(NormalizeTest, NonZeroNorm)
 {
     Vertex v = {0, 1.3, -5.9, 2.1, false};
-    Vertex v_norm = normalize(v);
-    EXPECT_NEAR(norm(v_norm), 1.0, 1e-3);
+    normalize(v);
+    EXPECT_NEAR(norm(v), 1.0, 1e-3);
 }
 
 TEST(NormalizeTest, ZeroNorm)
 {
     Vertex v = {1, 0, 0, 0, false};
-    Vertex v_norm = normalize(v);
-    EXPECT_NEAR(norm(v_norm), 0.0, 1e-3);
+    normalize(v);
+    EXPECT_NEAR(norm(v), 0.0, 1e-3);
 }

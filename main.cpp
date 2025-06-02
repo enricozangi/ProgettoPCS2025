@@ -67,12 +67,17 @@ int main()
 
     Polyhedron geodetic = triangolazione(solid, b);
 
+    for(Vertex& v : geodetic.vertices)
+    {
+        normalize(v);
+    }
+
     exportVertices(geodetic.vertices);
     exportEdges(geodetic.edges);
     exportFaces(geodetic.faces);
-    exportPolyhedra(geodetic);
+    exportParaview(geodetic);
 
-    
+    exportParaview(geodetic);
 
     return 0;
 

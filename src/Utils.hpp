@@ -20,7 +20,7 @@ Polyhedron icosaedro();
 // normalize vertices
 
 double norm(const Vertex& v);
-Vertex normalize(const Vertex& v);
+void normalize(Vertex& v);
 
 // export functions
 
@@ -28,3 +28,7 @@ void exportVertices(const vector<Vertex>& vertices);
 void exportEdges(const vector<Edge>& edges);
 void exportFaces(const vector<Face>& faces);
 void exportPolyhedra(const Polyhedron& p);
+
+// export in Paraview
+
+void exportParaview(const Polyhedron& p);

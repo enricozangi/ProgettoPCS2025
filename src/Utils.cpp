@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <Eigen/Eigen>
+#include "UCDUtilities.hpp"
 
 #include "Utils.hpp"
 #include "polyhedron_library.hpp"
@@ -180,17 +182,20 @@ double norm (const Vertex& v)
 
 // function that normalize vertices
 
-Vertex normalize(const Vertex& v)
+void normalize(Vertex& v)
 {
     double norm_v = norm(v);
 
-    if(norm_v == 0)
+    if(norm_v > 1e-10)
     {
-        cerr << "norm is 0" << endl;
-        return v;
+        v.x /= norm_v;
+        v.y /= norm_v; 
+        v.z /= norm_v;
     }
-
-    return {v.id, v.x / norm_v, v.y / norm_v, v.z / norm_v, false};
+    else
+    {
+        cerr << "norm = 0" << endl;
+    }
 };
 
 // Cell0Ds.txt (vertices)
@@ -312,4 +317,38 @@ void exportPolyhedra(const Polyhedron& p)
     outFile << ";\n";
 
     outFile.close();
+}
+
+// Export in Paraview
+
+void exportParaview(const Polyhedron& p)
+{
+    Eigen::MatrixXd Cell0Ds;
+    Cell0Ds = Eigen::MatrixXd::Zero(3, p.numVertices());
+
+    for(const auto& v : p.vertices)
+    {
+        Cell0Ds.col(v.id) << v.x, v.y, v.z;
+    }
+
+    Eigen::MatrixXi Cell1Ds;
+    Cell1Ds = Eigen::MatrixXi::Zero(2, p.numEdges());
+
+    for(const auto& e : p.edges)
+    {
+        int id = e.id;
+
+        Cell1Ds(0, id) = e.origin;
+        Cell1Ds(1, id) = e.end;
+    }
+
+    // Export in the correct format
+    Gedim::UCDUtilities utilities;
+    utilities.ExportPoints("../ListPolygons/Cell0Ds.inp",
+                           Cell0Ds);
+
+    utilities.ExportSegments("../ListPolygons/Cell1Ds.inp",
+                             Cell0Ds,
+                             Cell1Ds);
+
 }
