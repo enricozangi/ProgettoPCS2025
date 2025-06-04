@@ -62,18 +62,14 @@ Polyhedron triangolazione(const Polyhedron& poly, int b) {
     for (const auto& v : poly.vertices) {
         newPoly.vertices.push_back({ nextVertexId++, v.x, v.y, v.z, false });
     }
-
-    // Calcola passo p (usiamo primo edge A-B)
-    const Vertex& A = poly.vertices[0];
-    const Vertex& B = poly.vertices[1];
-    double p = distance(A, B) / b;
+    
 
     // Ciclo sulle facce
     for (const auto& face : poly.faces) {
         const Vertex& A = poly.vertices[face.vertices[0].id];
         const Vertex& B = poly.vertices[face.vertices[1].id];
         const Vertex& C = poly.vertices[face.vertices[2].id];
-
+        double p = distance(A, B) / b;
         vector<int> faceVertexIds;
         vector<Edge> localEdges;  // svuotato a ogni faccia
 

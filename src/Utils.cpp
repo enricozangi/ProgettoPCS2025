@@ -435,15 +435,13 @@ Polyhedron dualPolyhedron(const Polyhedron& p)
             }
         }
     }
-
     // create faces of the Goldberg polyhedron
-    
     // Ogni vertice del poliedro originale corrisponde a una faccia del duale.
     // Per ogni vertice, trova tutte le facce che lo contengono e crea una faccia del duale
     for (const auto& v : p.vertices) {
-        std::vector<Vertex> dualFaceVertices;
-        std::vector<Edge> dualFaceEdges;
-        std::vector<int> faceIds;
+        vector<Vertex> dualFaceVertices;
+        vector<Edge> dualFaceEdges;
+        vector<int> faceIds;
 
         // Trova tutte le facce che contengono il vertice v
         for (const auto& f : p.faces) {
@@ -481,4 +479,4 @@ Polyhedron dualPolyhedron(const Polyhedron& p)
         normalize(v);
     }
     return dual;
-}
+} 
