@@ -103,6 +103,7 @@ Polyhedron triangolazione(const Polyhedron& poly, int b) {
                     if (edgeMap.find({min_id, max_id}) == edgeMap.end()) {
                         newPoly.edges.push_back({ nextEdgeId, min_id, max_id, false });
                         edgeMap[{min_id, max_id}] = true;
+                        nextEdgeId++;
                     }
 
                     localEdges.push_back({ -1, min_id, max_id, false });  // ID -1: solo per confronto locale
