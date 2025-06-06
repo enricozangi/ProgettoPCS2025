@@ -36,3 +36,5 @@ void exportParaview(const Polyhedron& p);
 // dual polyhedra
 
 Polyhedron dualPolyhedron(const Polyhedron& p);
+void verificaVertici(const Polyhedron& poly, int id1, int id2);
+void shortestPath(Polyhedron& poly, int startId, int endId);

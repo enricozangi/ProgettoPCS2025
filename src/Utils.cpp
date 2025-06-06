@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <stdexcept>
 #include <cmath>
 #include <Eigen/Eigen>
 #include <map>
@@ -479,4 +480,80 @@ Polyhedron dualPolyhedron(const Polyhedron& p)
         normalize(v);
     }
     return dual;
-} 
+}
+
+
+
+void verificaVertici(const Polyhedron& poly, int id1, int id2) {
+    bool trovato1 = false, trovato2 = false;
+
+    for (const Vertex& v : poly.vertices) {
+        if (v.id == id1) trovato1 = true;
+        if (v.id == id2) trovato2 = true;
+        if (trovato1 && trovato2) break;
+    }
+
+    if (!trovato1 || !trovato2) {
+        cerr << "Errore: uno o entrambi gli ID dei vertici specificati non esistono nel poliedro." << endl;
+        exit(1);
+    }
+}
+void shortestPath(Polyhedron& poly, int id1, int id2) {
+    int n = poly.vertices.size();
+
+    // Matrice delle distanze
+    vector<vector<int>> dist(n, vector<int>(n, 100000));
+    vector<vector<int>> next(n, vector<int>(n, -1));
+
+    // Inizializza la distanza tra i vertici connessi da un lato
+    for (const auto& edge : poly.edges) {
+        dist[edge.origin][edge.end] = 1;
+        dist[edge.end][edge.origin] = 1;
+        next[edge.origin][edge.end] = edge.end;
+        next[edge.end][edge.origin] = edge.origin;
+    }
+
+    // Floyd-Warshall
+    for (int k = 0; k < n; ++k) {
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                    next[i][j] = next[i][k];
+                }
+            }
+        }
+    }
+
+    // Ricostruisci il percorso da id1 a id2
+    if (next[id1][id2] == -1) {
+        cerr << "Nessun percorso tra " << id1 << " e " << id2 << endl;
+        return;
+    }
+
+    vector<int> path;
+    int u = id1;
+    while (u != id2) {
+        path.push_back(u);
+        u = next[u][id2];
+    }
+    path.push_back(id2);
+
+    // Marca i vertici nel percorso
+    for (int id : path) {
+        poly.vertices[id].ShortPath = true;
+    }
+
+    // Marca i lati nel percorso
+    for (size_t i = 0; i < path.size() - 1; ++i) {
+        int from = path[i];
+        int to = path[i + 1];
+        for (auto& edge : poly.edges) {
+            if ((edge.origin == from && edge.end == to) ||
+                (edge.origin == to && edge.end == from)) {
+                edge.ShortPath = true;
+                break;
+            }
+        }
+    }
+}
