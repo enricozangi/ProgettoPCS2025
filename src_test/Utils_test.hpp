@@ -6,6 +6,7 @@
 #include <gtest/gtest.h>
 #include "Utils.hpp"
 #include "polyhedron_library.hpp"
+#include "triangolazione.hpp"
 
 using namespace std;
 using namespace polyhedron_library;
@@ -46,7 +47,7 @@ TEST(NormalizeTest, ZeroNorm)
     EXPECT_NEAR(norm(v), 0.0, 1e-3);
 }
 
-TEST(DualTest, Goldberg)
+TEST(DualTest, Goldbergb1)
 {
     Polyhedron p = tetraedro();
     Polyhedron g = dualPolyhedron(p);
@@ -88,4 +89,26 @@ TEST(ShortestPathTest, SimpleGraph) {
     EXPECT_FALSE(poly.edges[0].ShortPath);
     EXPECT_FALSE(poly.edges[1].ShortPath);
     EXPECT_TRUE(poly.edges[2].ShortPath);
+}
+
+TEST(DualTest, Goldbergb2)
+{
+    Polyhedron p = tetraedro();
+    Polyhedron ptr = triangolazione(p, 2);
+    Polyhedron g = dualPolyhedron(ptr);
+    EXPECT_TRUE(g.isValid());
+    EXPECT_EQ(g.numVertices(), ptr.numFaces()) << "mismatch between vertices and faces";
+    EXPECT_EQ(g.numEdges(), ptr.numEdges()) << "mismatch bitween edges";
+    EXPECT_EQ(g.numFaces(), ptr.numVertices()) << "mismatch between faces and vertices";
+}
+
+TEST(DualTest, Goldbergb3)
+{
+    Polyhedron p = tetraedro();
+    Polyhedron ptr = triangolazione(p, 3);
+    Polyhedron g = dualPolyhedron(ptr);
+    EXPECT_TRUE(g.isValid());
+    EXPECT_EQ(g.numVertices(), ptr.numFaces()) << "mismatch between vertices and faces";
+    EXPECT_EQ(g.numEdges(), ptr.numEdges()) << "mismatch bitween edges";
+    EXPECT_EQ(g.numFaces(), ptr.numVertices()) << "mismatch between faces and vertices";
 }

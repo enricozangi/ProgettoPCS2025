@@ -80,10 +80,14 @@ namespace polyhedron_library
                         break;
                     }
                 }  
-                if (sorted.size() != E)
-                {
-                    cerr << "size error" << endl;
-                }
+            if (sorted.size() != E)
+            {
+                cerr << "size error" << endl;
+            }
+            if (sorted.front().origin != sorted.back().end)
+            {
+                cerr << "cycle error" << endl;
+            }
             return sorted;
         }
 
@@ -113,6 +117,11 @@ namespace polyhedron_library
         bool isValid() const
         {
             int E = numEdges();
+            if (E < 3)
+            {
+                cerr << "Face with id " << id << " has less than 3 edges." << endl;
+                return false;
+            }
             vector<Edge> edges_list = sortEdges();
             vector<Vertex> vertices_list = sortVertices();
 
@@ -168,7 +177,7 @@ namespace polyhedron_library
             {
                 if (!faces[e].isValid())
                 {
-                    cerr << "Invalid polyhedron." << endl;
+                    cerr << "Invalid polyhedron: face " << faces[e].id << " is invalid." << endl;
                     return false;
                 }
             }

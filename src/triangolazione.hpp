@@ -55,7 +55,7 @@ Polyhedron triangolazione(const Polyhedron& poly, int b) {
     int nextFaceId = 0;
     double epsilon = 1e-8;
 
-    map<pair<int, int>, bool> edgeMap;
+    map<pair<int, int>, int> edgeMap;
     map<string, bool> faceMap;
 
     // Copia i vertici originali
@@ -102,11 +102,10 @@ Polyhedron triangolazione(const Polyhedron& poly, int b) {
 
                     if (edgeMap.find({min_id, max_id}) == edgeMap.end()) {
                         newPoly.edges.push_back({ nextEdgeId, min_id, max_id, false });
-                        edgeMap[{min_id, max_id}] = true;
+                        edgeMap[{min_id, max_id}] = nextEdgeId;
                         nextEdgeId++;
-                    }
-
-                    localEdges.push_back({ -1, min_id, max_id, false });  // ID -1: solo per confronto locale
+                    }                                    
+                    localEdges.push_back({ edgeMap[{min_id, max_id}], min_id, max_id, false });
                 }
             }
         }

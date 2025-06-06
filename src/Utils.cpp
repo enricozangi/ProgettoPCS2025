@@ -422,15 +422,8 @@ Polyhedron dualPolyhedron(const Polyhedron& p)
         for(const auto& a : adj)
         {
             Edge e = {-1, f.id, a.id, false};
-            bool alreadyExists = false;
-            for (const auto& existingEdge : dual.edges) {
-                if ((existingEdge.origin == f.id && existingEdge.end == a.id) ||
-                    (existingEdge.origin == a.id && existingEdge.end == f.id)) {
-                    alreadyExists = true;
-                    break;
-                }
-            }
-            if (!alreadyExists) {
+            if(f.id < a.id)
+            {
                 e.id = dual.edges.size();
                 dual.edges.push_back(e);
             }
@@ -454,19 +447,29 @@ Polyhedron dualPolyhedron(const Polyhedron& p)
                 }
             }
         }
-
+        /*
+        for (size_t i = 0; i < faceIds.size(); ++i) {
+            int vId = faceIds[i];
+            cout << "Face ID: " << v.id << endl;
+            cout << "Vertex ID: " << vId << "; ";
+        }
+        */    
         // Ordina i centroidi in senso antiorario rispetto al vertice originale (opzionale, qui lasciato come trovato)
         // Crea gli edge della faccia duale
-        for (size_t i = 0; i < faceIds.size(); ++i) {
-            int from = faceIds[i];
-            int to = faceIds[(i + 1) % faceIds.size()];
-            // Trova l'edge corrispondente
-            for (const auto& e : dual.edges) {
-                if ((e.origin == from && e.end == to) || (e.origin == to && e.end == from)) {
-                    dualFaceEdges.push_back(e);
-                    break;
+        for (size_t i = 0; i < faceIds.size(); ++i)
+        {
+            for (size_t j = i + 1; j < faceIds.size(); ++j)
+            {
+                int from = faceIds[i];
+                int to = faceIds[j];
+                // Trova l'edge corrispondente
+                for (const auto& e : dual.edges) {
+                    if ((e.origin == from && e.end == to) || (e.origin == to && e.end == from)) {
+                        dualFaceEdges.push_back(e);
+                        break;
+                    }
                 }
-            }
+            }  
         }
 
         Face dualFace;

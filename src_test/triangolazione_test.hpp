@@ -21,10 +21,6 @@ TEST(TriangolazioneTest, SuddivisioneTetraedro) {
     
     EXPECT_EQ(p_triangolato.edges.size(), 48);
 
-    // Stampa i vertici
-    for (const auto& v : p_triangolato.vertices) {
-        std::cout << "Vertex " << v.id << ": (" << v.x << ", " << v.y << ", " << v.z << ")" << std::endl;
-    }
  //tutta sta manfrina l'abbiamo fatta a mente potrebbe essere sbagliato :p
     int x = 3;
     Polyhedron p_triangolato2 = triangolazione(p, x);
