@@ -117,3 +117,34 @@ TEST(DualTest, Goldbergb3)
     EXPECT_EQ(g.numEdges(), ptr.numEdges()) << "mismatch bitween edges";
     EXPECT_EQ(g.numFaces(), ptr.numVertices()) << "mismatch between faces and vertices";
 }
+TEST(ShortPathInfoTest, CalcolaNumeroLatiEDistanzaTotale) {
+    // Crea un poliedro semplice con 3 vertici e 2 edge
+    Polyhedron poly;
+
+    // Aggiungi vertici
+    poly.vertices.push_back({0, 0.0, 0.0, 0.0, false});
+    poly.vertices.push_back({1, 1.0, 0.0, 0.0, false});
+    poly.vertices.push_back({2, 0.0, 1.0, 0.0, false});
+
+    // Aggiungi edge
+    poly.edges.push_back({0, 0, 1, true});  // Parte dello shortest path
+    poly.edges.push_back({1, 1, 2, false}); // Non parte dello shortest path
+
+    // Calcola le informazioni sullo shortest path
+    int edgeCount = 0;
+    double totalDistance = 0.0;
+    for (const auto& edge : poly.edges) {
+        if (edge.ShortPath) {
+            edgeCount++;
+            const Vertex& v1 = poly.vertices[edge.origin];
+            const Vertex& v2 = poly.vertices[edge.end];
+            totalDistance += distance(v1, v2);
+        }
+    }
+
+    // Verifica che il numero di edge nello shortest path sia corretto
+    EXPECT_EQ(edgeCount, 1);
+
+    // Verifica che la distanza totale sia corretta
+    EXPECT_DOUBLE_EQ(totalDistance, 1.0);
+}

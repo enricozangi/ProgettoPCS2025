@@ -65,6 +65,7 @@ int main()
         int id_vertex2 = input[5];
         verificaVertici(geodetic,id_vertex1,id_vertex2);
         shortestPath(geodetic,id_vertex1,id_vertex2);
+        stampaShortPathInfo(geodetic);
         vector<int> vertexBool = getVertexShortPathFlags(geodetic);
         vector<int> edgeBool = getEdgeShortPathFlags(geodetic);     
     }

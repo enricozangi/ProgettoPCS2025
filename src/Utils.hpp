@@ -40,4 +40,5 @@ void verificaVertici(const Polyhedron& poly, int id1, int id2);
 void shortestPath(Polyhedron& poly, int startId, int endId);
 double distance(const Vertex& v1, const Vertex& v2);
 vector<int> getEdgeShortPathFlags(const Polyhedron& poly);
-vector<int> getVertexShortPathFlags(const Polyhedron& poly)
+vector<int> getVertexShortPathFlags(const Polyhedron& poly);
+void stampaShortPathInfo(const Polyhedron& poly);

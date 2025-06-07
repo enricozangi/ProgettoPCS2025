@@ -574,3 +574,19 @@ vector<int> getEdgeShortPathFlags(const Polyhedron& poly) {
     }
     return flags;
 }
+void stampaShortPathInfo(const Polyhedron& poly) {
+    int edgeCount = 0;
+    double totalDistance = 0.0;
+
+    for (const auto& edge : poly.edges) {
+        if (edge.ShortPath) {
+            edgeCount++;
+            const Vertex& v1 = poly.vertices[edge.origin];
+            const Vertex& v2 = poly.vertices[edge.end];
+            totalDistance += distanza(v1, v2);
+        }
+    }
+
+    cout << "Numero di lati nello shortpath: " << edgeCount << endl;
+    cout << "Distanza totale dello shortpath: " << totalDistance << endl;
+}
