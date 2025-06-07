@@ -57,38 +57,43 @@ TEST(DualTest, Goldbergb1)
     EXPECT_EQ(g.numFaces(), p.numVertices()) << "mismatch between faces and vertices";
 }
 TEST(ShortestPathTest, SimpleGraph) {
-    // Costruzione di un semplice grafo:
-    // 0 --1-- 1 --2-- 3
-    //  \             /
-    //    ----10-----
+
     Polyhedron poly;
 
     poly.vertices = {
         {0, 0.0, 0.0, 0.0, false},
-        {1, 1.0, 0.0, 0.0, false},
+        {1, 1.0, 1.0, 100.0, false},
         {2, 2.0, 0.0, 0.0, false},
-        {3, 3.0, 0.0, 0.0, false}
+        {3, 3.0, 0.0, 0.0, false},
+        {4, 3.0, 1.0, 0.0, false},
+        {5, 6.0, 2.0, 1.0, false}
     };
 
     poly.edges = {
         {0, 0, 1, false},
-        {1, 1, 3, false},
-        {2, 0, 3, false}
+        {1, 1, 5, false},
+        {2, 0, 3, false},
+        {3, 3, 4, false},
+        {4, 4, 5, false}
     };
 
     // Calcolo cammino più breve tra 0 e 3
-    shortestPath(poly, 0, 3);
+    shortestPath(poly, 0, 5);
 
     // Verifica dei vertici nel cammino minimo: devono essere 0, 1, 3
     EXPECT_TRUE(poly.vertices[0].ShortPath);
     EXPECT_FALSE(poly.vertices[1].ShortPath);
     EXPECT_TRUE(poly.vertices[3].ShortPath);
     EXPECT_FALSE(poly.vertices[2].ShortPath);
+    EXPECT_TRUE(poly.vertices[4].ShortPath);
+    EXPECT_TRUE(poly.vertices[5].ShortPath);
 
     // Verifica degli archi nel cammino minimo: devono essere 0 (0-1) e 1 (1-3)
     EXPECT_FALSE(poly.edges[0].ShortPath);
     EXPECT_FALSE(poly.edges[1].ShortPath);
     EXPECT_TRUE(poly.edges[2].ShortPath);
+    EXPECT_TRUE(poly.edges[3].ShortPath);
+    EXPECT_TRUE(poly.edges[4].ShortPath);
 }
 
 TEST(DualTest, Goldbergb2)

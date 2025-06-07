@@ -13,7 +13,11 @@
 
 using namespace std;
 using namespace polyhedron_library;
-
+double distanza(const Vertex& v1, const Vertex& v2) {
+    return sqrt(pow(v1.x - v2.x, 2) +
+                pow(v1.y - v2.y, 2) +
+                pow(v1.z - v2.z, 2));
+}
 string controllaQuadrupla(const std::vector<int>& quadrupla)
 {
     if (quadrupla.size() != 4)
@@ -510,8 +514,12 @@ void shortestPath(Polyhedron& poly, int id1, int id2) {
 
     // Inizializza la distanza tra i vertici connessi da un lato
     for (const auto& edge : poly.edges) {
-        dist[edge.origin][edge.end] = 1;
-        dist[edge.end][edge.origin] = 1;
+        const Vertex& v1 = poly.vertices[edge.origin];
+        const Vertex& v2 = poly.vertices[edge.end];
+
+        double d = distanza(v1, v2);
+        dist[edge.origin][edge.end] = d;
+        dist[edge.end][edge.origin] = d;
         next[edge.origin][edge.end] = edge.end;
         next[edge.end][edge.origin] = edge.origin;
     }
