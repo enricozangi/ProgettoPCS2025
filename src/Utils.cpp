@@ -7,12 +7,14 @@
 #include <set>
 #include <algorithm>
 #include <numeric>
+#include <queue>
 #include "UCDUtilities.hpp"
 #include "Utils.hpp"
 #include "polyhedron_library.hpp"
 
 using namespace std;
 using namespace polyhedron_library;
+
 double distanza(const Vertex& v1, const Vertex& v2) {
     return sqrt(pow(v1.x - v2.x, 2) +
                 pow(v1.y - v2.y, 2) +
@@ -208,10 +210,10 @@ void normalize(Vertex& v)
 
 // Cell0Ds.txt (vertices)
 
-void exportVertices(const vector<Vertex>& vertices)
+void exportVertices(const vector<Vertex>& vertices, const string& subfolder)
 {
-
-    ofstream outFile("../ListPolygons/Cell0Ds.txt");
+    string path = "../ListPolygons/" + subfolder + "/Cell0Ds.txt";
+    ofstream outFile(path);
 
     if (!outFile)
     {
@@ -232,11 +234,11 @@ void exportVertices(const vector<Vertex>& vertices)
 
     // Cell1Ds.txt (edges)
 
-void exportEdges(const vector<Edge>& edges)
+void exportEdges(const vector<Edge>& edges, const string& subfolder)
 {
 
-    ofstream outFile("../ListPolygons/Cell1Ds.txt");
-
+    string path = "../ListPolygons/" + subfolder + "/Cell1Ds.txt";
+    ofstream outFile(path);
     if (!outFile)
     {
         cerr << "file not found" << endl;
@@ -255,10 +257,10 @@ void exportEdges(const vector<Edge>& edges)
 
     // Cell2Ds.txt (faces)
 
-void exportFaces(const vector<Face>& faces)
+void exportFaces(const vector<Face>& faces, const string& subfolder)
 {
-    ofstream outFile("../ListPolygons/Cell2Ds.txt");
-
+    string path = "../ListPolygons/" + subfolder + "/Cell2Ds.txt";
+    ofstream outFile(path);
     if (!outFile)
     {
         cerr << "file not found" << endl;
@@ -290,10 +292,10 @@ void exportFaces(const vector<Face>& faces)
 
     // Cell3Ds.txt (polyhedra)
 
-void exportPolyhedra(const Polyhedron& p)
+void exportPolyhedra(const Polyhedron& p, const string& subfolder)
 {
-    ofstream outFile("../ListPolygons/Cell3Ds.txt");
-
+    string path = "../ListPolygons/" + subfolder + "/Cell3Ds.txt";
+    ofstream outFile(path);
     if (!outFile)
     {
         cerr << "file not found" << endl;
@@ -329,8 +331,11 @@ void exportPolyhedra(const Polyhedron& p)
 
 // Export in Paraview
 
-void exportParaview(const Polyhedron& p)
+void exportParaview(const Polyhedron& p, const string& subfolder)
 {
+    string path1 = "../ListPolygons/" + subfolder + "/Cell0Ds.inp";
+    string path2 = "../ListPolygons/" + subfolder + "/Cell1Ds.inp";
+
     Eigen::MatrixXd Cell0Ds;
     Cell0Ds = Eigen::MatrixXd::Zero(3, p.numVertices());
 
@@ -351,10 +356,58 @@ void exportParaview(const Polyhedron& p)
     }
 
     Gedim::UCDUtilities utilities;
-    utilities.ExportPoints("../ListPolygons/Cell0Ds.inp", Cell0Ds);
+    utilities.ExportPoints(path1, Cell0Ds);
 
-    utilities.ExportSegments("../ListPolygons/Cell1Ds.inp", Cell0Ds, Cell1Ds);
+    utilities.ExportSegments(path2, Cell0Ds, Cell1Ds);
 
+}
+
+void exportParaviewFlags(
+    const Polyhedron& p,
+    const vector<int>& vertexFlags,
+    const vector<int>& edgeFlags,
+    const string& subfolder
+)
+{
+    string path1 = "../ListPolygons/" + subfolder + "/Cell0Ds.inp";
+    string path2 = "../ListPolygons/" + subfolder + "/Cell1Ds.inp";
+
+    Eigen::MatrixXd Cell0Ds = Eigen::MatrixXd::Zero(3, p.numVertices());
+    for(const auto& v : p.vertices)
+    {
+        Cell0Ds.col(v.id) << v.x, v.y, v.z;
+    }
+
+    Eigen::MatrixXi Cell1Ds = Eigen::MatrixXi::Zero(2, p.numEdges());
+    for(const auto& e : p.edges)
+    {
+        int id = e.id;
+        Cell1Ds(0, id) = e.origin;
+        Cell1Ds(1, id) = e.end;
+    }
+
+    vector<double> vertices_double(vertexFlags.begin(), vertexFlags.end());
+    vector<double> edges_double(edgeFlags.begin(), edgeFlags.end());
+
+    Gedim::UCDProperty<double> vflagProperty;
+    Gedim::UCDProperty<double> eflagProperty;
+
+    vflagProperty.Label = "vertexShortPath";
+    vflagProperty.UnitLabel = "";
+    vflagProperty.NumComponents = 1;
+    vflagProperty.Data = vertices_double.data();
+
+    eflagProperty.Label = "edgesShortPath";
+    eflagProperty.UnitLabel = "";
+    eflagProperty.NumComponents = 1;
+    eflagProperty.Data = edges_double.data();
+
+    vector<Gedim::UCDProperty<double>> v_properties{vflagProperty};
+    vector<Gedim::UCDProperty<double>> e_properties{eflagProperty};
+
+    Gedim::UCDUtilities utilities;
+    utilities.ExportPoints(path1, Cell0Ds, v_properties); 
+    utilities.ExportSegments(path2, Cell0Ds, Cell1Ds, v_properties, e_properties);
 }
 
 // Dual polyhedra  
@@ -505,50 +558,53 @@ void verificaVertici(const Polyhedron& poly, int id1, int id2) {
         exit(1);
     }
 }
-void shortestPath(Polyhedron& poly, int id1, int id2) {
+void shortestPath(Polyhedron& poly, int id1, int id2)
+{
     int n = poly.vertices.size();
+    vector<double> dist(n, 1e9);
+    vector<int> prev(n, -1);
+    vector<bool> visited(n, false);
 
-    // Matrice delle distanze
-    vector<vector<int>> dist(n, vector<int>(n, 100000));
-    vector<vector<int>> next(n, vector<int>(n, -1));
+    dist[id1] = 0.0;
 
-    // Inizializza la distanza tra i vertici connessi da un lato
-    for (const auto& edge : poly.edges) {
-        const Vertex& v1 = poly.vertices[edge.origin];
-        const Vertex& v2 = poly.vertices[edge.end];
+    // Min-heap: (distance, vertex id)
+    priority_queue<pair<double, int>, vector<pair<double, int>>, greater<pair<double, int>>> pq;
+    pq.push({0.0, id1});
 
-        double d = distanza(v1, v2);
-        dist[edge.origin][edge.end] = d;
-        dist[edge.end][edge.origin] = d;
-        next[edge.origin][edge.end] = edge.end;
-        next[edge.end][edge.origin] = edge.origin;
-    }
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+        if (visited[u]) continue;
+        visited[u] = true;
+        if (u == id2) break;
 
-    // Floyd-Warshall
-    for (int k = 0; k < n; ++k) {
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (dist[i][k] + dist[k][j] < dist[i][j]) {
-                    dist[i][j] = dist[i][k] + dist[k][j];
-                    next[i][j] = next[i][k];
-                }
+        // For each neighbor via edges
+        for (const auto& edge : poly.edges) {
+            int v = -1;
+            if (edge.origin == u) v = edge.end;
+            else if (edge.end == u) v = edge.origin;
+            else continue;
+
+            double weight = distanza(poly.vertices[u], poly.vertices[v]);
+            if (dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+                prev[v] = u;
+                pq.push({dist[v], v});
             }
         }
     }
 
-    // Ricostruisci il percorso da id1 a id2
-    if (next[id1][id2] == -1) {
+    if (prev[id2] == -1 && id1 != id2) {
         cerr << "Nessun percorso tra " << id1 << " e " << id2 << endl;
         return;
     }
 
+    // Ricostruisci il percorso da id1 a id2
     vector<int> path;
-    int u = id1;
-    while (u != id2) {
-        path.push_back(u);
-        u = next[u][id2];
+    for (int at = id2; at != -1; at = prev[at]) {
+        path.push_back(at);
     }
-    path.push_back(id2);
+    reverse(path.begin(), path.end());
 
     // Marca i vertici nel percorso
     for (int id : path) {
@@ -556,7 +612,7 @@ void shortestPath(Polyhedron& poly, int id1, int id2) {
     }
 
     // Marca i lati nel percorso
-    for (size_t i = 0; i < path.size() - 1; ++i) {
+    for (size_t i = 0; i + 1 < path.size(); ++i) {
         int from = path[i];
         int to = path[i + 1];
         for (auto& edge : poly.edges) {

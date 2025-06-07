@@ -56,7 +56,9 @@ TEST(DualTest, Goldbergb1)
     EXPECT_EQ(g.numEdges(), p.numEdges()) << "mismatch bitween edges";
     EXPECT_EQ(g.numFaces(), p.numVertices()) << "mismatch between faces and vertices";
 }
-TEST(ShortestPathTest, SimpleGraph) {
+
+TEST(ShortestPathTest, SimpleGraph)
+{
 
     Polyhedron poly;
 
@@ -94,6 +96,94 @@ TEST(ShortestPathTest, SimpleGraph) {
     EXPECT_TRUE(poly.edges[2].ShortPath);
     EXPECT_TRUE(poly.edges[3].ShortPath);
     EXPECT_TRUE(poly.edges[4].ShortPath);
+}
+
+TEST(ShortestPathTest, ErrorIfVertexNotExists)
+{
+    Polyhedron p = tetraedro();
+    EXPECT_EXIT(verificaVertici(p, 0, 99), ::testing::ExitedWithCode(1), "Errore:.*");
+}
+
+TEST(ShortestPathTest, tetrahedronPath)
+{
+    Polyhedron p = tetraedro();
+    shortestPath(p, 0, 1);
+    EXPECT_TRUE(p.vertices[0].ShortPath);
+    EXPECT_TRUE(p.vertices[1].ShortPath);
+    EXPECT_FALSE(p.vertices[2].ShortPath);
+    EXPECT_FALSE(p.vertices[3].ShortPath);
+    EXPECT_TRUE(p.edges[0].ShortPath);
+    EXPECT_FALSE(p.edges[1].ShortPath);
+    EXPECT_FALSE(p.edges[2].ShortPath);
+    EXPECT_FALSE(p.edges[3].ShortPath);
+}
+
+TEST(ShortestPathTest, DisconnectedGraph)
+{
+    Polyhedron poly;
+
+    poly.vertices = {
+        {0, 0.0, 0.0, 0.0, false},
+        {1, 1.0, 0.0, 0.0, false},
+        {2, 2.0, 0.0, 0.0, false},
+        {3, 3.0, 0.0, 0.0, false}
+    };
+
+    poly.edges = {
+        {0, 0, 1, false},
+        {1, 2, 3, false}
+    };
+
+    shortestPath(poly, 0, 3);
+
+    EXPECT_FALSE(poly.vertices[0].ShortPath);
+    EXPECT_FALSE(poly.vertices[3].ShortPath);
+    EXPECT_FALSE(poly.vertices[1].ShortPath);
+    EXPECT_FALSE(poly.vertices[2].ShortPath);
+
+    EXPECT_FALSE(poly.edges[0].ShortPath);
+    EXPECT_FALSE(poly.edges[1].ShortPath);
+}
+
+TEST(ShortestPathTest, ComplexGraphMultiplePaths)
+{
+    Polyhedron poly;
+
+    poly.vertices = {
+        {0, 0.0, 0.0, 0.0, false},
+        {1, 1.0, 0.0, 0.0, false},
+        {2, 2.0, 0.0, 0.0, false},
+        {3, 1.0, 1.0, 0.0, false},
+        {4, 2.0, 1.0, 0.0, false},
+        {5, 3.0, 0.0, 0.0, false}
+    };
+
+    poly.edges = {
+        {0, 0, 1, false},
+        {1, 1, 2, false},
+        {2, 0, 3, false},
+        {3, 3, 4, false},
+        {4, 4, 5, false},
+        {5, 2, 5, false},
+        {6, 1, 3, false}
+    };
+
+    shortestPath(poly, 0, 5);
+
+    EXPECT_TRUE(poly.vertices[0].ShortPath);
+    EXPECT_TRUE(poly.vertices[1].ShortPath);
+    EXPECT_TRUE(poly.vertices[2].ShortPath);
+    EXPECT_TRUE(poly.vertices[5].ShortPath);
+    EXPECT_FALSE(poly.vertices[3].ShortPath);
+    EXPECT_FALSE(poly.vertices[4].ShortPath);
+
+    EXPECT_TRUE(poly.edges[0].ShortPath);
+    EXPECT_TRUE(poly.edges[1].ShortPath);
+    EXPECT_TRUE(poly.edges[5].ShortPath);
+    EXPECT_FALSE(poly.edges[2].ShortPath);
+    EXPECT_FALSE(poly.edges[3].ShortPath);
+    EXPECT_FALSE(poly.edges[4].ShortPath);
+    EXPECT_FALSE(poly.edges[6].ShortPath);
 }
 
 TEST(DualTest, Goldbergb2)
