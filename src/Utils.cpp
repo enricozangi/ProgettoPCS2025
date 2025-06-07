@@ -22,27 +22,22 @@ string controllaQuadrupla(const std::vector<int>& quadrupla)
 {
     if (quadrupla.size() != 4)
         return "La quadrupla non ha 4 numeri";
-
     for (int num : quadrupla) {
         if (num < 0)
             return "La quadrupla contiene numeri negativi";
     }
-
     int p = quadrupla[0];
     int q = quadrupla[1];
-
     if (p < 3 || q < 3)
         return "Il primo (p) o il secondo (q) numero è minore di 3";
     if (p > 3)
         return "La quadrupla va bene in teoria, ma questo programma non lo sa gestire (p > 3)";
     bool terzoZero = (quadrupla[2] == 0);
     bool quartoZero = (quadrupla[3] == 0);
-
     if (terzoZero && quartoZero)
         return "Sia il terzo che il quarto numero sono zero";
     if (!terzoZero && !quartoZero)
         return "Nessuno zero tra terzo e quarto numero";
-
     return "OK";
 }
 Polyhedron tetraedro() {
@@ -139,11 +134,9 @@ Polyhedron icosaedro()
         {10, -phi, 0, -1, false},
         {11, -phi, 0, 1, false}
     };
-
     for (Vertex& v : P.vertices) {
         normalize(v);
     }
-
     P.edges = {
         {0, 0, 5, false}, {1, 0, 1, false}, {2, 0, 11, false}, {3, 0, 10, false}, {4, 0, 7, false},
         {5, 1, 5, false}, {6, 1, 7, false}, {7, 1, 8, false}, {8, 1, 9, false}, {9, 5, 9, false},
@@ -152,7 +145,6 @@ Polyhedron icosaedro()
         {20, 2, 3, false}, {21, 2, 6, false}, {22, 6, 3, false}, {23, 8, 3, false}, {24, 8, 6, false},
         {25, 7, 6, false}, {26, 2, 10, false}, {27, 10, 6, false}, {28, 10, 7, false}, {29, 11, 10, false}
     };
-
 	// Set values of faces
 	P.faces = {
 		{0, {P.vertices[5], P.vertices[0], P.vertices[11]}, {P.edges[0], P.edges[2], P.edges[10]}},
@@ -567,4 +559,18 @@ void shortestPath(Polyhedron& poly, int id1, int id2) {
             }
         }
     }
+}
+vector<int> getVertexShortPathFlags(const Polyhedron& poly) {
+    vector<int> flags;
+    for (const auto& v : poly.vertices) {
+        flags.push_back(v.ShortPath ? 1 : 0);
+    }
+    return flags;
+}
+vector<int> getEdgeShortPathFlags(const Polyhedron& poly) {
+    vector<int> flags;
+    for (const auto& e : poly.edges) {
+        flags.push_back(e.ShortPath ? 1 : 0);
+    }
+    return flags;
 }

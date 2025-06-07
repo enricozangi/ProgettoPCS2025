@@ -43,9 +43,7 @@ int main()
     // create output files
     int q = quadrupla[1];
     int b = (quadrupla[2] > 0) ? quadrupla[2] : quadrupla[3];
-
     Polyhedron solid;
-
     if (q == 3) {
         solid = tetraedro();
     } else if (q == 4) {
@@ -56,20 +54,19 @@ int main()
         cerr << "Errore: impossibile inizializzare il solido." << endl;
         return 1;
     }
-
     // Triangolazione e normalizzazione
     Polyhedron geodetic = triangolazione(solid, b);
-
     for (Vertex& v : geodetic.vertices) {
         normalize(v);
     }
-
     // Se input da 6, controlla che i due vertici esistano
     if (input.size() == 6) {
         int id_vertex1 = input[4];
         int id_vertex2 = input[5];
         verificaVertici(geodetic,id_vertex1,id_vertex2);
-        
+        shortestPath(geodetic,id_vertex1,id_vertex2);
+        vector<int> vertexBool = getVertexShortPathFlags(geodetic);
+        vector<int> edgeBool = getEdgeShortPathFlags(geodetic);     
     }
     if (q==3){
         Polyhedron goldberg = dualPolyhedron(geodetic);
