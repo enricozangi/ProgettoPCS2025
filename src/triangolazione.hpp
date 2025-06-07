@@ -197,7 +197,7 @@ Polyhedron triangolazione2(const Polyhedron& poly, int b) {
 
     map<pair<int, int>, bool> edgeMap;
     map<string, bool> faceMap;
-    double passo = distance(poly.vertices[0], poly.vertices[1]) / (2 * b);
+    double passo = distanza(poly.vertices[0], poly.vertices[1]) / (2 * b);
 
     for (const auto& face : poly.faces) {
         const Vertex& A = poly.vertices[face.vertices[0].id];
@@ -223,7 +223,7 @@ Polyhedron triangolazione2(const Polyhedron& poly, int b) {
         for (size_t i = 0; i < localVertIds.size(); ++i) {
             for (size_t j = i + 1; j < localVertIds.size(); ++j) {
                 int vi = localVertIds[i], vj = localVertIds[j];
-                double d = distance(newPoly.vertices[vi], newPoly.vertices[vj]);
+                double d = distanza(newPoly.vertices[vi], newPoly.vertices[vj]);
                 if (d < 2 * passo - epsilon) {
                     int min_id = min(vi, vj), max_id = max(vi, vj);
                     if (edgeMap.find({min_id, max_id}) == edgeMap.end()) {

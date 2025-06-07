@@ -228,7 +228,7 @@ TEST(ShortPathInfoTest, CalcolaNumeroLatiEDistanzaTotale) {
             edgeCount++;
             const Vertex& v1 = poly.vertices[edge.origin];
             const Vertex& v2 = poly.vertices[edge.end];
-            totalDistance += distance(v1, v2);
+            totalDistance += distanza(v1, v2);
         }
     }
 

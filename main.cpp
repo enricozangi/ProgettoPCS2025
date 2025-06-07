@@ -57,11 +57,13 @@ int main()
     }
 
     // Triangolazione e normalizzazione
+
+    Polyhedron geodetic;
     if (quadrupla[2]==quadrupla[3]){
-        Polyhedron geodetic = triangolazione2(solid,b);
+        geodetic = triangolazione2(solid,b);
     }
     else{
-        Polyhedron geodetic = triangolazione(solid, b);
+        geodetic = triangolazione(solid, b);
     }
     for (Vertex& v : geodetic.vertices) {
         normalize(v);
