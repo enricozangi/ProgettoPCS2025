@@ -71,5 +71,20 @@ TEST(TriangolazioneTest, numTestq5)
         EXPECT_EQ(20 * T, p_triangolato.numFaces()) << "Failed for b = " << b;
     }
 }
+TEST(TriangolazioneTest, triangolazione2Test) {
+    Polyhedron p = tetraedro();
 
+    int b = 1;
+
+    // Applica la suddivisione
+    Polyhedron p_triangolato = triangolazione2(p, b);
+
+    // Il tetraedro ha 4 facce, quindi ci aspettiamo 4 * 4 = 16 facce
+    EXPECT_EQ(p_triangolato.faces.size(), 72);
+
+    // Verifica che il numero di vertici sia aumentato
+    EXPECT_EQ(p_triangolato.vertices.size(), 14);
+    
+    EXPECT_EQ(p_triangolato.edges.size(), 108);
 // Aggiungere test su valenza dei vertici
+}

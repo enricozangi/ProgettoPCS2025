@@ -22,24 +22,32 @@ string controllaQuadrupla(const std::vector<int>& quadrupla)
 {
     if (quadrupla.size() != 4)
         return "La quadrupla non ha 4 numeri";
+
     for (int num : quadrupla) {
         if (num < 0)
             return "La quadrupla contiene numeri negativi";
     }
+
     int p = quadrupla[0];
     int q = quadrupla[1];
+    int a = quadrupla[2];
+    int b = quadrupla[3];
+
     if (p < 3 || q < 3)
         return "Il primo (p) o il secondo (q) numero è minore di 3";
+
     if (p > 3)
         return "La quadrupla va bene in teoria, ma questo programma non lo sa gestire (p > 3)";
-    bool terzoZero = (quadrupla[2] == 0);
-    bool quartoZero = (quadrupla[3] == 0);
-    if (terzoZero && quartoZero)
+
+    if ((a == 0 && b == 0))
         return "Sia il terzo che il quarto numero sono zero";
-    if (!terzoZero && !quartoZero)
-        return "Nessuno zero tra terzo e quarto numero";
+
+    if ((a != 0 && b != 0) && (a != b))
+        return "Entrambi i numeri sono diversi da zero ma non uguali";
+
     return "OK";
 }
+
 Polyhedron tetraedro() {
     Polyhedron p;
     p.id = 1;

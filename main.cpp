@@ -54,8 +54,14 @@ int main()
         cerr << "Errore: impossibile inizializzare il solido." << endl;
         return 1;
     }
+    Polyhedron geodetic;
     // Triangolazione e normalizzazione
-    Polyhedron geodetic = triangolazione(solid, b);
+    if (quadrupla[2]==quadrupla[3]){
+        Polyhedron geodetic = triangolazione2(solid,b);
+    }
+    else{
+        Polyhedron geodetic = triangolazione(solid, b);
+    }
     for (Vertex& v : geodetic.vertices) {
         normalize(v);
     }
