@@ -80,11 +80,11 @@ TEST(TriangolazioneTest, triangolazione2Test) {
     Polyhedron p_triangolato = triangolazione2(p, b);
 
     // Il tetraedro ha 4 facce, quindi ci aspettiamo 4 * 4 = 16 facce
-    EXPECT_EQ(p_triangolato.faces.size(), 72);
+    EXPECT_EQ(p_triangolato.faces.size(), 24);
 
     // Verifica che il numero di vertici sia aumentato
     EXPECT_EQ(p_triangolato.vertices.size(), 14);
     
-    EXPECT_EQ(p_triangolato.edges.size(), 108);
+    EXPECT_EQ(p_triangolato.edges.size(), 36);
 // Aggiungere test su valenza dei vertici
 }

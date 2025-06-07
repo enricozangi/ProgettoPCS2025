@@ -173,7 +173,6 @@ Polyhedron triangolazione2(const Polyhedron& poly, int b) {
     newPoly.id = poly.id;
     int nextVertexId = 0, nextEdgeId = 0, nextFaceId = 0;
     double epsilon = 1e-8;
-
     for (const auto& v : poly.vertices) {
         newPoly.vertices.push_back({ nextVertexId++, v.x, v.y, v.z, false });
     }
@@ -195,21 +194,33 @@ Polyhedron triangolazione2(const Polyhedron& poly, int b) {
     }
 
     // Triangolazione normale per ottenere baricentri
-    Polyhedron poly1 = triangolazione(poly, b);
-    for (const auto& face : poly1.faces) {
+    Polyhedron poly2 = triangolazione(poly, b);
+    for (const auto& face : poly2.faces) {
         Vertex centro = faceCentroid1(face, nextVertexId);
         insertVertex(newPoly.vertices, centro.x, centro.y, centro.z, nextVertexId);
+    }
+    Polyhedron poly1 =triangolazione(poly,2*b);
+    map<pair<int, int>, bool> edgesPoly1;
+    vector<pair<Vertex, Vertex>> edgeCoordsPoly1;
+    for (const auto& e : poly1.edges) {
+        const Vertex& a = poly1.vertices[e.origin];
+        const Vertex& b = poly1.vertices[e.end];
+        edgeCoordsPoly1.push_back({a, b});
+    }
+    cerr << "Vertici di newPoly:\n";
+    for (const auto& v : newPoly.vertices) {
+        cerr << "ID: " << v.id << " - (" << v.x << ", " << v.y << ", " << v.z << ")\n";
     }
 
     map<pair<int, int>, bool> edgeMap;
     map<string, bool> faceMap;
-    double passo = distance(poly.vertices[0], poly.vertices[1]) / (2 * b);
+    
 
     for (const auto& face : poly.faces) {
         const Vertex& A = poly.vertices[face.vertices[0].id];
         const Vertex& B = poly.vertices[face.vertices[1].id];
         const Vertex& C = poly.vertices[face.vertices[2].id];
-
+        double passo = distance(A, B) / (2 * b);
         double ux = B.x - A.x, uy = B.y - A.y, uz = B.z - A.z;
         double vx = C.x - A.x, vy = C.y - A.y, vz = C.z - A.z;
         double nx = uy * vz - uz * vy;
@@ -224,23 +235,64 @@ Polyhedron triangolazione2(const Polyhedron& poly, int b) {
                 localVertIds.push_back(v.id);
             }
         }
-
+        cerr << "localVertIds: ";
+        for (int id : localVertIds) {
+            cerr << id << " ";
+        }
+        cerr << endl;
         vector<Edge> localEdges;
-        for (size_t i = 0; i < localVertIds.size(); ++i) {
+                for (size_t i = 0; i < localVertIds.size(); ++i) {
             for (size_t j = i + 1; j < localVertIds.size(); ++j) {
                 int vi = localVertIds[i], vj = localVertIds[j];
                 double d = distance(newPoly.vertices[vi], newPoly.vertices[vj]);
-                if (d < 2 * passo - epsilon) {
-                    int min_id = min(vi, vj), max_id = max(vi, vj);
-                    if (edgeMap.find({min_id, max_id}) == edgeMap.end()) {
-                        newPoly.edges.push_back({ nextEdgeId, min_id, max_id, false });
-                        edgeMap[{min_id, max_id}] = true;
+
+                if (d < 3.0 / 2.0 * passo) {
+                    const Vertex& v1 = newPoly.vertices[vi];
+                    const Vertex& v2 = newPoly.vertices[vj];
+                    bool isinPoly1 = false;
+
+                    for (const auto& e : poly1.edges) {
+                        const Vertex& a = poly1.vertices[e.origin];
+                        const Vertex& b = poly1.vertices[e.end];
+
+                        if ((arePointsEqual(v1, a, epsilon) && arePointsEqual(v2, b, epsilon)) ||
+                            (arePointsEqual(v1, b, epsilon) && arePointsEqual(v2, a, epsilon))) {
+                            double d_ref = distance(a, b);
+                            if (fabs(d - d_ref) > epsilon) {
+                                isinPoly1 = true;
+                                break;
+                            }
+                        }
                     }
-                    localEdges.push_back({ -1, min_id, max_id, false });
+
+                    // Escludi edge solo se non è su una delle rette A-B, B-C, C-A
+                    bool isOnInitialEdge = (
+                        (arePointsEqual(v1, A, epsilon) || arePointsEqual(v2, A, epsilon)) &&
+                        (arePointsEqual(v1, B, epsilon) || arePointsEqual(v2, B, epsilon))) ||
+                        ((arePointsEqual(v1, B, epsilon) || arePointsEqual(v2, B, epsilon)) &&
+                        (arePointsEqual(v1, C, epsilon) || arePointsEqual(v2, C, epsilon))) ||
+                        ((arePointsEqual(v1, C, epsilon) || arePointsEqual(v2, C, epsilon)) &&
+                        (arePointsEqual(v1, A, epsilon) || arePointsEqual(v2, A, epsilon)));
+
+                    if (!isinPoly1 || isOnInitialEdge) {
+                        int min_id = min(vi, vj), max_id = max(vi, vj);
+                        if (!edgeMap[{min_id, max_id}]) {
+                            newPoly.edges.push_back({ nextEdgeId, min_id, max_id, false });
+                            edgeMap[{min_id, max_id}] = true;
+                            localEdges.push_back({ nextEdgeId++, min_id, max_id, false });
+                        }
+                    }
                 }
             }
         }
 
+        cerr << "localEdges (archi sulla faccia):\n";
+        for (const auto& e : localEdges) {
+            const Vertex& v1 = newPoly.vertices[e.origin];
+            const Vertex& v2 = newPoly.vertices[e.end];
+            cerr << "Edge tra ID " << e.origin << " (" << v1.x << ", " << v1.y << ", " << v1.z << ") e "
+                 << e.end << " (" << v2.x << ", " << v2.y << ", " << v2.z << ")\n";
+        }
         for (size_t i = 0; i < localEdges.size(); ++i) {
             for (size_t j = i + 1; j < localEdges.size(); ++j) {
                 for (size_t k = j + 1; k < localEdges.size(); ++k) {
