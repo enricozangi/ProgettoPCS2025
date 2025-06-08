@@ -1,0 +1,51 @@
+@startuml
+namespace polyhedron_library {
+
+class Vertex {
+    +int id
+    +double x
+    +double y
+    +double z
+    +bool ShortPath
+    +void swapVertices()
+}
+
+class Edge {
+    +int id
+    +int origin
+    +int end
+    +bool ShortPath
+    +void swapVertices()
+}
+
+class Face {
+    +int id
+    +vector<Vertex> vertices
+    +vector<Edge> edges
+    +int numVertices()
+    +int numEdges()
+    +vector<Edge> sortEdges()
+    +vector<Vertex> sortVertices()
+    +bool isValid()
+}
+
+class Polyhedron {
+    +int id
+    +vector<Vertex> vertices
+    +vector<Edge> edges
+    +vector<Face> faces
+    +int numVertices()
+    +int numEdges()
+    +int numFaces()
+    +bool isValid()
+}
+
+Polyhedron "1" o-- "*" Vertex
+Polyhedron "1" o-- "*" Edge
+Polyhedron "1" o-- "*" Face
+Face "1" o-- "*" Vertex
+Face "1" o-- "*" Edge
+
+}
+
+@enduml
