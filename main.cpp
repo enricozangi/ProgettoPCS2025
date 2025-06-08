@@ -15,7 +15,7 @@ int main()
     vector<int> input;
     int numero;
 
-    cout << "Inserisci 4 o 6 numeri interi :\n";
+    cout << "Inserisci 4 o 6 numeri interi: (se vuoi inserirne solo 4, premi qualsiasi carattere non numerico per inviare)\n";
     for (int i = 0; i < 6; ++i) {
         if (!(cin >> numero)) break;
         input.push_back(numero);
@@ -40,7 +40,8 @@ int main()
         return 1;
     }
 
-    // create output files
+    // create platonic solid
+
     int q = quadrupla[1];
     int b = (quadrupla[2] > 0) ? quadrupla[2] : quadrupla[3];
     Polyhedron solid;
@@ -54,46 +55,55 @@ int main()
         cerr << "Errore: impossibile inizializzare il solido." << endl;
         return 1;
     }
-    Polyhedron geodetic;
+
     // Triangolazione e normalizzazione
+
+    Polyhedron geodetic;
     if (quadrupla[2]==quadrupla[3]){
-        Polyhedron geodetic = triangolazione2(solid,b);
+        geodetic = triangolazione2(solid,b);
     }
     else{
-        Polyhedron geodetic = triangolazione(solid, b);
+        geodetic = triangolazione(solid, b);
     }
     for (Vertex& v : geodetic.vertices) {
         normalize(v);
     }
+
+    string subfolderGeo = "Geodetic";
+    exportVertices(geodetic.vertices, subfolderGeo);
+    exportEdges(geodetic.edges, subfolderGeo);
+    exportFaces(geodetic.faces, subfolderGeo);
+    exportPolyhedra(geodetic, subfolderGeo);
+
     // Se input da 6, controlla che i due vertici esistano
-    if (input.size() == 6) {
+    if (input.size() == 6)
+    {
         int id_vertex1 = input[4];
         int id_vertex2 = input[5];
         verificaVertici(geodetic,id_vertex1,id_vertex2);
         shortestPath(geodetic,id_vertex1,id_vertex2);
         stampaShortPathInfo(geodetic);
         vector<int> vertexBool = getVertexShortPathFlags(geodetic);
-        vector<int> edgeBool = getEdgeShortPathFlags(geodetic);     
+        vector<int> edgeBool = getEdgeShortPathFlags(geodetic);
+        exportParaviewFlags(geodetic, vertexBool, edgeBool, subfolderGeo);
     }
-    if (q==3){
+    else
+    {
+        exportParaview(geodetic, subfolderGeo);
+    }
+    
+    // If q == 3, create and export Goldberg polyhedron
+
+    if (q == 3)
+    {
+        string subfolderGol = "Goldberg";
         Polyhedron goldberg = dualPolyhedron(geodetic);
-        exportVertices(goldberg.vertices);
-        exportEdges(goldberg.edges);
-        exportFaces(goldberg.faces);
-        exportPolyhedra(goldberg);
-        exportParaview(goldberg);
+        exportVertices(goldberg.vertices, subfolderGol);
+        exportEdges(goldberg.edges, subfolderGol);
+        exportFaces(goldberg.faces, subfolderGol);
+        exportPolyhedra(goldberg, subfolderGol);
+        exportParaview(goldberg, subfolderGol);
     }
-    else{
-        exportVertices(geodetic.vertices);
-        exportEdges(geodetic.edges);
-        exportFaces(geodetic.faces);
-        exportParaview(geodetic);
-    }
-
-
-    cout << geodetic.numVertices() << endl;
-    cout << geodetic.numEdges() << endl;
-    cout << geodetic.numFaces() << endl;
 
     return 0;
 }
