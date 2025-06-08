@@ -152,6 +152,17 @@ int mid(const vector<int>& v) {
     sort(tmp.begin(), tmp.end());
     return tmp[1];
 }
+bool edgeExistsInVector(const vector<Edge>& edges, int id1, int id2) {
+    int min_id = min(id1, id2);
+    int max_id = max(id1, id2);
+    for (const auto& e : edges) {
+        if ((e.origin == min_id && e.end == max_id) || (e.origin == max_id && e.end == min_id)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 Polyhedron triangolazione2(const Polyhedron& poly, int b) {
     Polyhedron newPoly;
     newPoly.id = poly.id;
@@ -204,29 +215,31 @@ Polyhedron triangolazione2(const Polyhedron& poly, int b) {
                     int min_id = min(prevId, id);
                     int max_id = max(prevId, id);
 
-                    // Controllo su newPoly
-                    bool alreadyInNewPoly = any_of(newPoly.edges.begin(), newPoly.edges.end(), [&](const Edge& e) {
-                        return (e.origin == min_id && e.end == max_id) || (e.origin == max_id && e.end == min_id);
-                    });
-
-                    if (!alreadyInNewPoly) {
+                    if (!edgeExistsInVector(newPoly.edges, min_id, max_id)) {
                         newPoly.edges.push_back({ nextEdgeId++, min_id, max_id, false });
                     }
 
-                    // Controllo su localEdges
-                    bool alreadyInLocal = any_of(localEdges.begin(), localEdges.end(), [&](const Edge& e) {
-                        return (e.origin == min_id && e.end == max_id) || (e.origin == max_id && e.end == min_id);
-                    });
+                    if (!edgeExistsInVector(localEdges, min_id, max_id)) {
+                        int matchingEdgeId = -1;
+                        for (const auto& e : newPoly.edges) {
+                            if ((e.origin == min_id && e.end == max_id) ||
+                                (e.origin == max_id && e.end == min_id)) {
+                                matchingEdgeId = e.id;
+                                break;
+                            }
+                        }
 
-                    if (!alreadyInLocal) {
-                        localEdges.push_back({ -1, min_id, max_id, false }); // id fittizio, se necessario
+                        if (matchingEdgeId != -1) {
+                            localEdges.push_back({ matchingEdgeId, min_id, max_id, false });
+                        } else {
+                            cerr << "Errore: edge non trovato in newPoly.edges\n";
+                        }
                     }
                 }
 
                 prevId = id;
             }
         }
-
 
         for (const auto& f1 : poly1.faces) {
             Vertex centro = faceCentroid(f1, nextVertexId);
@@ -252,18 +265,9 @@ Polyhedron triangolazione2(const Polyhedron& poly, int b) {
                             break;
                         }
                     }
-                    if (!esisteInPoly2) {
-                        bool giaPresente = false;
-                        for (const auto& e : newPoly.edges) {
-                            if ((e.origin == vi && e.end == vj) || (e.origin == vj && e.end == vi)) {
-                                giaPresente = true;
-                                break;
-                            }
-                        }
-                        if (!giaPresente) {
-                            newPoly.edges.push_back({nextEdgeId, vi, vj, false});
-                            localEdges.push_back({nextEdgeId++, vi, vj, false});
-                        }
+                    if (!esisteInPoly2 && !edgeExistsInVector(newPoly.edges, vi, vj)) {
+                        newPoly.edges.push_back({nextEdgeId, vi, vj, false});
+                        localEdges.push_back({nextEdgeId++, vi, vj, false});
                     }
                 }
             }
@@ -283,11 +287,10 @@ Polyhedron triangolazione2(const Polyhedron& poly, int b) {
                     verticeCounter[e3.origin]++;
                     verticeCounter[e3.end]++;
 
-                    // Verifica che ci siano esattamente 3 vertici, ciascuno presente due volte
                     if (verticeCounter.size() == 3 &&
                         all_of(verticeCounter.begin(), verticeCounter.end(),
-                                    [](const pair<int, int>& p) { return p.second == 2; })) {
-                        
+                               [](const pair<int, int>& p) { return p.second == 2; })) {
+
                         vector<Vertex> faceVertices;
                         for (const auto& [id, count] : verticeCounter) {
                             faceVertices.push_back(newPoly.vertices[id]);
