@@ -503,14 +503,7 @@ Polyhedron dualPolyhedron(const Polyhedron& p)
                     break;
                 }
             }
-        }
-        /*
-        for (size_t i = 0; i < faceIds.size(); ++i) {
-            int vId = faceIds[i];
-            cout << "Face ID: " << v.id << endl;
-            cout << "Vertex ID: " << vId << "; ";
-        }
-        */    
+        }   
         // Ordina i centroidi in senso antiorario rispetto al vertice originale (opzionale, qui lasciato come trovato)
         // Crea gli edge della faccia duale
         for (size_t i = 0; i < faceIds.size(); ++i)

@@ -8,17 +8,7 @@
 
 using namespace std;
 using namespace polyhedron_library;
-Vertex faceCentroid1(const Face& f, int id)
-{
-    double x = 0, y = 0, z = 0;
-    for (const auto& v : f.vertices) {
-        x += v.x;
-        y += v.y;
-        z += v.z;
-    }
-    int n = f.vertices.size();
-    return Vertex{id, x / n, y / n, z / n, false};
-}
+
 // Confronta due vertici con tolleranza
 bool arePointsEqual(const Vertex& v1, const Vertex& v2, double epsilon = 1e-8) {
     return fabs(v1.x - v2.x) < epsilon &&
@@ -239,7 +229,7 @@ Polyhedron triangolazione2(const Polyhedron& poly, int b) {
 
 
         for (const auto& f1 : poly1.faces) {
-            Vertex centro = faceCentroid1(f1, nextVertexId);
+            Vertex centro = faceCentroid(f1, nextVertexId);
             double val = nx * centro.x + ny * centro.y + nz * centro.z + d;
             if (fabs(val) < epsilon) {
                 newPoly.vertices.push_back({nextVertexId, centro.x, centro.y, centro.z, false});

@@ -42,6 +42,7 @@ void exportParaviewFlags(
 // dual polyhedra
 
 Polyhedron dualPolyhedron(const Polyhedron& p);
+Vertex faceCentroid(const Face& f, int id);
 
 // shortest path
 
