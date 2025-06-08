@@ -88,3 +88,88 @@ TEST(TriangolazioneTest, triangolazione2Test) {
     EXPECT_EQ(p_triangolato.edges.size(), 36);
 // Aggiungere test su valenza dei vertici
 }
+TEST(TriangolazioneTest, triangolazione2Test2) {
+    Polyhedron p = tetraedro();
+
+    int b = 2;
+
+    // Applica la suddivisione
+    Polyhedron p_triangolato = triangolazione2(p, b);
+
+    // Il tetraedro ha 4 facce, quindi ci aspettiamo 4 * 4 = 16 facce
+    EXPECT_EQ(p_triangolato.faces.size(), 72);
+
+    // Verifica che il numero di vertici sia aumentato
+    EXPECT_EQ(p_triangolato.vertices.size(), 38);
+    
+    EXPECT_EQ(p_triangolato.edges.size(), 108);
+// Aggiungere test su valenza dei vertici
+}
+TEST(TriangolazioneTest, triangolazione2Test3) {
+    Polyhedron p = ottaedro();
+
+    int b = 1;
+
+    // Applica la suddivisione
+    Polyhedron p_triangolato = triangolazione2(p, b);
+
+    // Il tetraedro ha 4 facce, quindi ci aspettiamo 4 * 4 = 16 facce
+    EXPECT_EQ(p_triangolato.faces.size(), 48);
+
+    // Verifica che il numero di vertici sia aumentato
+    EXPECT_EQ(p_triangolato.vertices.size(), 26);
+    
+    EXPECT_EQ(p_triangolato.edges.size(), 72);
+// Aggiungere test su valenza dei vertici
+}
+TEST(TriangolazioneTest, triangolazione2Test4) {
+    Polyhedron p = ottaedro();
+
+    int b = 2;
+
+    // Applica la suddivisione
+    Polyhedron p_triangolato = triangolazione2(p, b);
+
+    // Il tetraedro ha 4 facce, quindi ci aspettiamo 4 * 4 = 16 facce
+    EXPECT_EQ(p_triangolato.faces.size(), 144);
+
+    // Verifica che il numero di vertici sia aumentato
+    EXPECT_EQ(p_triangolato.vertices.size(), 74);
+    
+    EXPECT_EQ(p_triangolato.edges.size(), 216);
+// Aggiungere test su valenza dei vertici
+}
+TEST(TriangolazioneTest, triangolazione2Test5) {
+    Polyhedron p = icosaedro();
+
+    int b = 2;
+
+    // Applica la suddivisione
+    Polyhedron p_triangolato = triangolazione2(p, b);
+
+    // Il tetraedro ha 4 facce, quindi ci aspettiamo 4 * 4 = 16 facce
+    EXPECT_EQ(p_triangolato.faces.size(), 360);
+
+    // Verifica che il numero di vertici sia aumentato
+    EXPECT_EQ(p_triangolato.vertices.size(), 182);
+    
+    EXPECT_EQ(p_triangolato.edges.size(), 540);
+// Aggiungere test su valenza dei vertici
+}
+TEST(TriangolazioneTest, triangolazione2Test6) {
+    Polyhedron p = icosaedro();
+
+    int b = 1;
+
+    // Applica la suddivisione
+    Polyhedron p_triangolato = triangolazione2(p, b);
+
+    // Il tetraedro ha 4 facce, quindi ci aspettiamo 4 * 4 = 16 facce
+    EXPECT_EQ(p_triangolato.faces.size(), 120);
+
+    // Verifica che il numero di vertici sia aumentato
+    EXPECT_EQ(p_triangolato.vertices.size(), 62);
+    
+    EXPECT_EQ(p_triangolato.edges.size(), 180);
+// Aggiungere test su valenza dei vertici
+}
