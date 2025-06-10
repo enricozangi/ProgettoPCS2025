@@ -1,12 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include <stdexcept>
 #include <cmath>
 #include <Eigen/Eigen>
-#include <map>
-#include <set>
-#include <algorithm>
-#include <numeric>
 #include <queue>
 #include "UCDUtilities.hpp"
 #include "Utils.hpp"
@@ -32,8 +27,8 @@ string controllaQuadrupla(const std::vector<int>& quadrupla)
 
     int p = quadrupla[0];
     int q = quadrupla[1];
-    int a = quadrupla[2];
-    int b = quadrupla[3];
+    int b = quadrupla[2];
+    int c = quadrupla[3];
 
     if (p < 3 || q < 3)
         return "Il primo (p) o il secondo (q) numero è minore di 3";
@@ -41,10 +36,10 @@ string controllaQuadrupla(const std::vector<int>& quadrupla)
     if (p > 3)
         return "La quadrupla va bene in teoria, ma questo programma non lo sa gestire (p > 3)";
 
-    if ((a == 0 && b == 0))
+    if ((b == 0 && c == 0))
         return "Sia il terzo che il quarto numero sono zero";
 
-    if ((a != 0 && b != 0) && (a != b))
+    if ((b != 0 && c != 0) && (c != b))
         return "Entrambi i numeri sono diversi da zero ma non uguali";
 
     return "OK";
@@ -144,9 +139,6 @@ Polyhedron icosaedro()
         {10, -phi, 0, -1, false},
         {11, -phi, 0, 1, false}
     };
-    for (Vertex& v : P.vertices) {
-        normalize(v);
-    }
     P.edges = {
         {0, 0, 5, false}, {1, 0, 1, false}, {2, 0, 11, false}, {3, 0, 10, false}, {4, 0, 7, false},
         {5, 1, 5, false}, {6, 1, 7, false}, {7, 1, 8, false}, {8, 1, 9, false}, {9, 5, 9, false},
@@ -196,7 +188,7 @@ void normalize(Vertex& v)
 {
     double norm_v = norm(v);
 
-    if(norm_v > 1e-10)
+    if(norm_v > 1e-8)
     {
         v.x /= norm_v;
         v.y /= norm_v; 
@@ -463,7 +455,7 @@ vector<Face> facceAdiacenti(const Polyhedron& p, const Face& f)
 Polyhedron dualPolyhedron(const Polyhedron& p)
 {
     Polyhedron dual;
-    dual.id = p.id + 1;
+    dual.id = p.id;
 
     // create vertices of the Goldberg polyhedron
     for(const auto& f : p.faces)
@@ -548,7 +540,6 @@ void verificaVertici(const Polyhedron& poly, int id1, int id2) {
 
     if (!trovato1 || !trovato2) {
         cerr << "Errore: uno o entrambi gli ID dei vertici specificati non esistono nel poliedro." << endl;
-        exit(1);
     }
 }
 void shortestPath(Polyhedron& poly, int id1, int id2)

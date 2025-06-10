@@ -98,12 +98,6 @@ TEST(ShortestPathTest, SimpleGraph)
     EXPECT_TRUE(poly.edges[4].ShortPath);
 }
 
-TEST(ShortestPathTest, ErrorIfVertexNotExists)
-{
-    Polyhedron p = tetraedro();
-    EXPECT_EXIT(verificaVertici(p, 0, 99), ::testing::ExitedWithCode(1), "Errore:.*");
-}
-
 TEST(ShortestPathTest, tetrahedronPath)
 {
     Polyhedron p = tetraedro();

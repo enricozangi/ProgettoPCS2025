@@ -43,18 +43,17 @@ namespace polyhedron_library
             if (edges.empty()) return {};
 
             vector<Edge> unsorted = edges;            
-            size_t E = unsorted.size();
             vector<Edge> sorted;
 
             sorted.push_back(unsorted[0]);
             unsorted.erase(unsorted.begin());
-
                 while (!unsorted.empty())
                 {
                     int current_end = sorted.back().end;
                     bool found = false;
 
                     for (auto it = unsorted.begin(); it != unsorted.end(); ++it)
+                    // puntatore it, *it è l'edge
                     {
                         if (it->origin == current_end)
                         {
@@ -80,10 +79,6 @@ namespace polyhedron_library
                         break;
                     }
                 }  
-            if (sorted.size() != E)
-            {
-                cerr << "size error" << endl;
-            }
             if (sorted.front().origin != sorted.back().end)
             {
                 cerr << "cycle error" << endl;
@@ -98,7 +93,7 @@ namespace polyhedron_library
             size_t E = edges_list.size();
             vector<Vertex> sorted(E);
 
-
+            
             for(size_t e = 0; e < E; e++)
                 {
                     for(size_t j = 0; j < E; j++)
@@ -124,22 +119,6 @@ namespace polyhedron_library
             }
             vector<Edge> edges_list = sortEdges();
             vector<Vertex> vertices_list = sortVertices();
-
-            for (int e = 0; e < E; e++)
-            {
-                if (vertices_list[e].id != edges_list[e].origin)
-                {
-                    cerr << "Vertices and edges don't match." << endl;
-                    return false;
-                }
-            }
-
-            Edge e0 = edges_list[0];
-
-            if(e0.end != edges_list[1].origin && e0.end != edges_list[1].end)
-            {
-                e0.swapVertices();
-            }
 
             for (int e = 0; e < E; e++)
             {

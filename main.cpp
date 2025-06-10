@@ -27,7 +27,7 @@ int main()
     }
 
     // Verifica quadrupla iniziale
-    vector<int> quadrupla(input.begin(), input.begin() + 4);
+    const vector<int>  quadrupla = {input[0], input[1],input[2],input[3]};
     cout << "Hai inserito: ";
     for (int n : quadrupla) cout << n << " ";
     cout << endl;
