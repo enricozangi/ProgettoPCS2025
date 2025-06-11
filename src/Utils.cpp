@@ -3,6 +3,8 @@
 #include <cmath>
 #include <Eigen/Eigen>
 #include <queue>
+#include <string>
+#include <vector>
 #include "UCDUtilities.hpp"
 #include "Utils.hpp"
 #include "polyhedron_library.hpp"
@@ -10,19 +12,24 @@
 using namespace std;
 using namespace polyhedron_library;
 
+// Funzione che calcola la distanza tra due vertici
+
 double distanza(const Vertex& v1, const Vertex& v2) {
     return sqrt(pow(v1.x - v2.x, 2) +
                 pow(v1.y - v2.y, 2) +
                 pow(v1.z - v2.z, 2));
 }
-string controllaQuadrupla(const std::vector<int>& quadrupla)
+
+// Funzione che controlla la quadrupla di numeri interi
+
+string controllaQuadrupla(const vector<int>& quadrupla)
 {
     if (quadrupla.size() != 4)
-        return "La quadrupla non ha 4 numeri";
+        return "la quadrupla non ha 4 numeri";
 
     for (int num : quadrupla) {
         if (num < 0)
-            return "La quadrupla contiene numeri negativi";
+            return "la quadrupla contiene numeri negativi";
     }
 
     int p = quadrupla[0];
@@ -31,19 +38,21 @@ string controllaQuadrupla(const std::vector<int>& quadrupla)
     int c = quadrupla[3];
 
     if (p < 3 || q < 3)
-        return "Il primo (p) o il secondo (q) numero è minore di 3";
+        return "il primo numero (p) o il secondo numero (q) è minore di 3.";
 
     if (p > 3)
-        return "La quadrupla va bene in teoria, ma questo programma non lo sa gestire (p > 3)";
+        return "la quadrupla inserita non è adatta a questo programma (p > 3).";
 
     if ((b == 0 && c == 0))
-        return "Sia il terzo che il quarto numero sono zero";
+        return "i parametri b e c sono entrambi uguali a 0.";
 
-    if ((b != 0 && c != 0) && (c != b))
-        return "Entrambi i numeri sono diversi da zero ma non uguali";
+    if ((b != 0 && c != 0) && (b != c))
+        return "i parametri b e c sono diversi da zero ma non sono uguali tra loro.";
 
     return "OK";
 }
+
+// Funzione che crea un tetraedro regolare
 
 Polyhedron tetraedro() {
     Polyhedron p;
@@ -74,6 +83,8 @@ Polyhedron tetraedro() {
 
     return p;
 }
+
+// Funzione che crea un ottaedro regolare
 
 Polyhedron ottaedro()
 {
@@ -118,6 +129,8 @@ Polyhedron ottaedro()
     return p;
 }
 
+// Funzione che crea un icosaedro regolare
+
 Polyhedron icosaedro()
 {
 	Polyhedron P;
@@ -139,6 +152,7 @@ Polyhedron icosaedro()
         {10, -phi, 0, -1, false},
         {11, -phi, 0, 1, false}
     };
+
     P.edges = {
         {0, 0, 5, false}, {1, 0, 1, false}, {2, 0, 11, false}, {3, 0, 10, false}, {4, 0, 7, false},
         {5, 1, 5, false}, {6, 1, 7, false}, {7, 1, 8, false}, {8, 1, 9, false}, {9, 5, 9, false},
@@ -147,7 +161,7 @@ Polyhedron icosaedro()
         {20, 2, 3, false}, {21, 2, 6, false}, {22, 6, 3, false}, {23, 8, 3, false}, {24, 8, 6, false},
         {25, 7, 6, false}, {26, 2, 10, false}, {27, 10, 6, false}, {28, 10, 7, false}, {29, 11, 10, false}
     };
-	// Set values of faces
+
 	P.faces = {
 		{0, {P.vertices[5], P.vertices[0], P.vertices[11]}, {P.edges[0], P.edges[2], P.edges[10]}},
 		{1, {P.vertices[0], P.vertices[5], P.vertices[1]}, {P.edges[0], P.edges[5], P.edges[1]}},
@@ -174,7 +188,7 @@ Polyhedron icosaedro()
 	return P;
 }
 
-// function that computes the distance of a vertex from origin
+// funzione che calcola la distanza di un vertice dall'origine
 
 double norm (const Vertex& v)
 {
@@ -182,7 +196,7 @@ double norm (const Vertex& v)
 }
 
 
-// function that normalize vertices
+// funzione che normalizza i vertici
 
 void normalize(Vertex& v)
 {
@@ -200,6 +214,7 @@ void normalize(Vertex& v)
     }
 };
 
+// Funzioni per l'esportazione dei dati in file di testo
 // Cell0Ds.txt (vertices)
 
 void exportVertices(const vector<Vertex>& vertices, const string& subfolder)
@@ -354,6 +369,8 @@ void exportParaview(const Polyhedron& p, const string& subfolder)
 
 }
 
+// Export in Paraview con visualizzazione del cammino minimo
+
 void exportParaviewFlags(
     const Polyhedron& p,
     const vector<int>& vertexFlags,
@@ -402,9 +419,7 @@ void exportParaviewFlags(
     utilities.ExportSegments(path2, Cell0Ds, Cell1Ds, v_properties, e_properties);
 }
 
-// Dual polyhedra  
-
-// function to compute the centroid of a face
+// Funzione che calcola il baricentro di una faccia
 
 Vertex faceCentroid(const Face& f, int id)
 {
@@ -418,7 +433,7 @@ Vertex faceCentroid(const Face& f, int id)
     return Vertex{id, x / n, y / n, z / n, false};
 }
 
-// function to check if two faces share a common edge
+// Funzione per verificare se due facce condividono un lato comune
 
 bool haveCommonEdge(const Face& f1, const Face& f2)
 {
@@ -432,7 +447,7 @@ bool haveCommonEdge(const Face& f1, const Face& f2)
     return false;
 }
 
-// function to find adjacent faces of a given face in a polyhedron
+// Funzione per trovare le facce adiacenti a una data faccia in un poliedro
 
 vector<Face> facceAdiacenti(const Polyhedron& p, const Face& f)
 {
@@ -450,21 +465,24 @@ vector<Face> facceAdiacenti(const Polyhedron& p, const Face& f)
     return adiacenti;
 }
 
-// function to create the dual polyhedron of a given polyhedron
+// Funzione per creare il poliedro duale di un dato poliedro
+
 
 Polyhedron dualPolyhedron(const Polyhedron& p)
 {
     Polyhedron dual;
     dual.id = p.id;
 
-    // create vertices of the Goldberg polyhedron
+    // Crea i vertici del poliedro di Goldberg
+
     for(const auto& f : p.faces)
     {
         Vertex centroid = faceCentroid(f, f.id);
         dual.vertices.push_back(centroid);
     }
 
-    // create edges of the Goldberg polyhedron
+    // Crea gli spigoli del poliedro di Goldberg
+
     for(const auto& f : p.faces)
     {
         vector<Face> adj = facceAdiacenti(p, f);
@@ -478,7 +496,8 @@ Polyhedron dualPolyhedron(const Polyhedron& p)
             }
         }
     }
-    // create faces of the Goldberg polyhedron
+    // Crea le facce del poliedro di Goldberg
+
     // Ogni vertice del poliedro originale corrisponde a una faccia del duale.
     // Per ogni vertice, trova tutte le facce che lo contengono e crea una faccia del duale
     for (const auto& v : p.vertices) {
@@ -496,8 +515,7 @@ Polyhedron dualPolyhedron(const Polyhedron& p)
                 }
             }
         }   
-        // Ordina i centroidi in senso antiorario rispetto al vertice originale (opzionale, qui lasciato come trovato)
-        // Crea gli edge della faccia duale
+        // Crea gli edges della faccia duale
         for (size_t i = 0; i < faceIds.size(); ++i)
         {
             for (size_t j = i + 1; j < faceIds.size(); ++j)
@@ -527,7 +545,7 @@ Polyhedron dualPolyhedron(const Polyhedron& p)
     return dual;
 }
 
-
+// Funzione per verificare l'esistenza di due vertici in un poliedro
 
 void verificaVertici(const Polyhedron& poly, int id1, int id2) {
     bool trovato1 = false, trovato2 = false;
@@ -542,6 +560,10 @@ void verificaVertici(const Polyhedron& poly, int id1, int id2) {
         cerr << "Errore: uno o entrambi gli ID dei vertici specificati non esistono nel poliedro." << endl;
     }
 }
+
+// Funzione per calcolare il cammino minimo tra due vertici in un poliedro
+// Utilizza l'algoritmo di Dijkstra per trovare il cammino più breve tra due vertici
+
 void shortestPath(Polyhedron& poly, int id1, int id2)
 {
     int n = poly.vertices.size();
@@ -583,7 +605,7 @@ void shortestPath(Polyhedron& poly, int id1, int id2)
         return;
     }
 
-    // Ricostruisci il percorso da id1 a id2
+    // Ricostruisce il percorso da id1 a id2
     vector<int> path;
     for (int at = id2; at != -1; at = prev[at]) {
         path.push_back(at);
@@ -608,6 +630,9 @@ void shortestPath(Polyhedron& poly, int id1, int id2)
         }
     }
 }
+
+// Funzioni per ottenere i flag dei vertici e degli spigoli dello short path
+
 vector<int> getVertexShortPathFlags(const Polyhedron& poly) {
     vector<int> flags;
     for (const auto& v : poly.vertices) {
@@ -622,6 +647,9 @@ vector<int> getEdgeShortPathFlags(const Polyhedron& poly) {
     }
     return flags;
 }
+
+// Funzione per stampare le informazioni sul cammino minimo in un poliedro
+
 void stampaShortPathInfo(const Polyhedron& poly) {
     int edgeCount = 0;
     double totalDistance = 0.0;

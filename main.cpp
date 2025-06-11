@@ -1,17 +1,16 @@
+#include <iostream>
+
 #include "polyhedron_library.hpp"
 #include "Utils.hpp"
 #include "triangolazione.hpp"
-
-#include <iostream>
-#include <fstream>
-#include <filesystem>
 
 using namespace std;
 using namespace polyhedron_library;
 
 int main()
 {
-    // user input
+    // Input dell'utente
+
     vector<int> input;
     int numero;
 
@@ -27,8 +26,9 @@ int main()
     }
 
     // Verifica quadrupla iniziale
-    const vector<int>  quadrupla = {input[0], input[1],input[2],input[3]};
-    cout << "Hai inserito: ";
+
+    const vector<int> quadrupla = {input[0], input[1], input[2], input[3]};
+    cout << "Hai inserito i parametri: ";
     for (int n : quadrupla) cout << n << " ";
     cout << endl;
 
@@ -40,7 +40,7 @@ int main()
         return 1;
     }
 
-    // create platonic solid
+    // Costruzione del solido platonico
 
     int q = quadrupla[1];
     int b = (quadrupla[2] > 0) ? quadrupla[2] : quadrupla[3];
@@ -56,18 +56,21 @@ int main()
         return 1;
     }
 
-    // Triangolazione e normalizzazione
+    // Triangolazione del solido e normalizzazione dei vertici
 
     Polyhedron geodetic;
-    if (quadrupla[2]==quadrupla[3]){
+    if (quadrupla[2]==quadrupla[3]) {
         geodetic = triangolazione2(solid,b);
     }
-    else{
+    else {
         geodetic = triangolazione(solid, b);
     }
+
     for (Vertex& v : geodetic.vertices) {
         normalize(v);
     }
+
+    // Esportazione delle informazioni sul poliedro geodetico
 
     string subfolderGeo = "Geodetic";
     exportVertices(geodetic.vertices, subfolderGeo);
@@ -75,7 +78,8 @@ int main()
     exportFaces(geodetic.faces, subfolderGeo);
     exportPolyhedra(geodetic, subfolderGeo);
 
-    // Se input da 6, controlla che i due vertici esistano
+    // Se l'input ha 6 valori, viene trovato il cammino più breve tra i due vertici specificati
+
     if (input.size() == 6)
     {
         int id_vertex1 = input[4];
@@ -92,7 +96,7 @@ int main()
         exportParaview(geodetic, subfolderGeo);
     }
     
-    // If q == 3, create and export Goldberg polyhedron
+    // Se q == 3, viene creato ed esportato il corrispondente poliedro di Goldberg
 
     if (q == 3)
     {

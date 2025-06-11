@@ -23,7 +23,7 @@ namespace polyhedron_library
         int end;
         bool ShortPath;
 
-        void swapVertices()
+        void swapVertices() // O(1)
         {
             swap(origin, end);
         }
@@ -35,10 +35,10 @@ namespace polyhedron_library
         vector<Vertex> vertices;
         vector<Edge> edges;
         
-        int numVertices() const { return vertices.size(); }
-        int numEdges() const { return edges.size(); }
+        int numVertices() const { return vertices.size(); } // O(1)
+        int numEdges() const { return edges.size(); } // O(1)
 
-        vector<Edge> sortEdges() const
+        vector<Edge> sortEdges() const // O(E^2), dove E = edges.size()
         {
             if (edges.empty()) return {};
 
@@ -53,7 +53,6 @@ namespace polyhedron_library
                     bool found = false;
 
                     for (auto it = unsorted.begin(); it != unsorted.end(); ++it)
-                    // puntatore it, *it è l'edge
                     {
                         if (it->origin == current_end)
                         {
@@ -75,46 +74,47 @@ namespace polyhedron_library
 
                     if (!found)
                     {
-                        cerr << "sort error" << endl;
+                        cerr << "errore nell'ordinamento dei lati" << endl;
                         break;
                     }
                 }  
+
             if (sorted.front().origin != sorted.back().end)
             {
-                cerr << "cycle error" << endl;
+                cerr << "la faccia non è chiusa" << endl;
             }
             return sorted;
         }
 
-        vector<Vertex> sortVertices() const
+        vector<Vertex> sortVertices() const // O(E^2), dove E = edges.size()
         {
             vector<Vertex> unsorted = vertices;
             vector<Edge> edges_list = sortEdges();
             size_t E = edges_list.size();
             vector<Vertex> sorted(E);
 
-            
-            for(size_t e = 0; e < E; e++)
-                {
-                    for(size_t j = 0; j < E; j++)
-                    {
-                        if(unsorted[e].id == edges_list[j].origin)
-                        {
-                            sorted[j] = unsorted[e];
-                        }
 
+            for(size_t e = 0; e < E; e++)
+            {
+                for(size_t j = 0; j < E; j++)
+                {
+                    if(unsorted[e].id == edges_list[j].origin)
+                    {
+                        sorted[j] = unsorted[e];
                     }
-                }  
+
+                }
+            }  
 
             return sorted;
         }
 
-        bool isValid() const
+        bool isValid() const // O(E^2), dove E = edges.size()
         {
             int E = numEdges();
             if (E < 3)
             {
-                cerr << "Face with id " << id << " has less than 3 edges." << endl;
+                cerr << "La faccia con id " << id << " ha meno di 3 spigoli." << endl;
                 return false;
             }
             vector<Edge> edges_list = sortEdges();
@@ -129,7 +129,7 @@ namespace polyhedron_library
 
                 if (v1 != next_v1 && v1 != next_v2)
                 {
-                    cerr << "Discontinuity in the edges." << endl;
+                    cerr << "Discontinuità dei lati." << endl;
                     return false;
                 }
             }
@@ -144,19 +144,19 @@ namespace polyhedron_library
         vector<Edge> edges;
         vector<Face> faces;
         
-        int numVertices() const { return vertices.size(); }
-        int numEdges() const { return edges.size(); }
-        int numFaces() const { return faces.size(); }
+        int numVertices() const { return vertices.size(); } // O(1)
+        int numEdges() const { return edges.size(); } // O(1)
+        int numFaces() const { return faces.size(); } // O(1)
 
-        bool isValid() const
+        bool isValid() const // O(F * E^2)
         {
-            int E = numFaces();
+            int F = numFaces();
 
-            for (int e = 0; e < E; e++)
+            for (int e = 0; e < F; e++)
             {
                 if (!faces[e].isValid())
                 {
-                    cerr << "Invalid polyhedron: face " << faces[e].id << " is invalid." << endl;
+                    cerr << "Poliedro non valido: la faccia " << faces[e].id << " non è valida." << endl;
                     return false;
                 }
             }

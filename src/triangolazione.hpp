@@ -9,14 +9,16 @@
 using namespace std;
 using namespace polyhedron_library;
 
-// Confronta due vertici con tolleranza
+// Funzione che confronta due vertici con tolleranza
+
 bool arePointsEqual(const Vertex& v1, const Vertex& v2, double epsilon = 1e-8) {
     return fabs(v1.x - v2.x) < epsilon &&
            fabs(v1.y - v2.y) < epsilon &&
            fabs(v1.z - v2.z) < epsilon;
 }
 
-// Inserisce un nuovo vertice, evitando duplicati
+// Funzione che inserisce un nuovo vertice nella lista dei vertici, evitando duplicati
+
 int insertVertex(vector<Vertex>& vertices, double x, double y, double z, int& nextVertexId) {
     Vertex newV{ -1, x, y, z, false };
     for (const auto& v : vertices) {
@@ -30,13 +32,6 @@ int insertVertex(vector<Vertex>& vertices, double x, double y, double z, int& ne
     return id;
 }
 
-// Crea una chiave ordinata per la faccia
-string faceKey(int v1, int v2, int v3) {
-    vector<int> ids = {v1, v2, v3};
-    sort(ids.begin(), ids.end());
-    return to_string(ids[0]) + "-" + to_string(ids[1]) + "-" + to_string(ids[2]);
-}
-
 // Funzione principale
 Polyhedron triangolazione(const Polyhedron& poly, int b) {
     Polyhedron newPoly;
@@ -48,6 +43,9 @@ Polyhedron triangolazione(const Polyhedron& poly, int b) {
     double epsilon = 1e-8;
 
     map<pair<int, int>, int> edgeMap;
+    map<string, bool> faceMap;
+
+    // Ciclo sulle facce
     for (const auto& face : poly.faces) {
         const Vertex& A = poly.vertices[face.vertices[0].id];
         const Vertex& B = poly.vertices[face.vertices[1].id];
@@ -130,6 +128,7 @@ Polyhedron triangolazione(const Polyhedron& poly, int b) {
 
     return newPoly;
 }
+
 bool edgeExistsInVector(const vector<Edge>& edges, int id1, int id2) {
     for (const auto& e : edges) {
         if ((e.origin == id1 && e.end == id2) || (e.origin == id2 && e.end == id1)) {
@@ -138,6 +137,15 @@ bool edgeExistsInVector(const vector<Edge>& edges, int id1, int id2) {
     }
     return false;
 }
+
+// Complessità computazionale di triangolazione2:
+// La funzione effettua diversi cicli annidati sulle facce del poliedro, sui vertici e sugli spigoli generati dalla suddivisione. 
+// In particolare, per ogni faccia, genera O(b) nuovi vertici per lato (quindi O(b^2) vertici per faccia), 
+// e poi cicla su tutte le coppie e terne di questi vertici/edge per generare spigoli e facce locali. 
+// La complessità principale è dominata dai tripli cicli annidati per la generazione delle facce locali, 
+// che portano la complessità per faccia a O(b^6) nel caso peggiore (dato che il numero di edge locali è O(b^2), 
+// e si considerano tutte le terne). 
+// Complessivamente, la complessità totale è O(F * b^6), dove F è il numero di facce del poliedro di partenza.
 
 Polyhedron triangolazione2(const Polyhedron& poly, int b) {
     Polyhedron newPoly;

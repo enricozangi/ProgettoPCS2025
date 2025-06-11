@@ -1,5 +1,9 @@
 @startuml
-namespace polyhedron_library {
+left to right direction
+
+title Polyhedron Library - UML Documentation
+
+package polyhedron_library <<Folder>> {
 
 class Vertex {
     +int id
@@ -7,7 +11,6 @@ class Vertex {
     +double y
     +double z
     +bool ShortPath
-    +void swapVertices()
 }
 
 class Edge {
@@ -20,26 +23,35 @@ class Edge {
 
 class Face {
     +int id
-    +vector<Vertex> vertices
-    +vector<Edge> edges
+    +std::vector<Vertex> vertices
+    +std::vector<Edge> edges
     +int numVertices()
     +int numEdges()
-    +vector<Edge> sortEdges()
-    +vector<Vertex> sortVertices()
+    +std::vector<Edge> sortEdges()
+    +std::vector<Vertex> sortVertices()
     +bool isValid()
+    .. isValidTest ..
+
+    ValidFaceTest
+    DiscontinuityTest
+
+    .. SortTest ..
+
+    SortEdgesTest
 }
 
 class Polyhedron {
     +int id
-    +vector<Vertex> vertices
-    +vector<Edge> edges
-    +vector<Face> faces
+    +std::vector<Vertex> vertices
+    +std::vector<Edge> edges
+    +std::vector<Face> faces
     +int numVertices()
     +int numEdges()
     +int numFaces()
     +bool isValid()
 }
 
+' Relazioni di composizione
 Polyhedron "1" o-- "*" Vertex
 Polyhedron "1" o-- "*" Edge
 Polyhedron "1" o-- "*" Face
@@ -47,5 +59,12 @@ Face "1" o-- "*" Vertex
 Face "1" o-- "*" Edge
 
 }
+package Gedim <<Frame>>
+{
+
+}
+
+
+Polyhedron::GedimInterface --left--> Gedim
 
 @enduml
