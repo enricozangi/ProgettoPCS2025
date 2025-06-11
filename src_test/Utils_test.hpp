@@ -11,28 +11,28 @@
 using namespace std;
 using namespace polyhedron_library;
 
-// tests to check correctness of polyhedra
-
+// Test per verificare la validità del tetraedro
 TEST(PolyTest, TetrahedronTest)
 {
     Polyhedron t = tetraedro();
     EXPECT_TRUE(t.isValid());
 }
 
+// Test per verificare la validità dell'ottaedro
 TEST(PolyTest, OctahedronTest)
 {
     Polyhedron o = ottaedro();
     EXPECT_TRUE(o.isValid());
 }
 
+// Test per verificare la validità dell'icosaedro
 TEST(PolyTest, IcosahedronTest)
 {
     Polyhedron i = icosaedro();
     EXPECT_TRUE(i.isValid());
 }
 
-// tests to check correctness of norm and normalize function
-
+// Test per verificare la normalizzazione di un vertice con norma non nulla
 TEST(NormalizeTest, NonZeroNorm)
 {
     Vertex v = {0, 1.3, -5.9, 2.1, false};
@@ -40,6 +40,7 @@ TEST(NormalizeTest, NonZeroNorm)
     EXPECT_NEAR(norm(v), 1.0, 1e-3);
 }
 
+// Test per verificare la normalizzazione di un vertice con norma nulla
 TEST(NormalizeTest, ZeroNorm)
 {
     Vertex v = {1, 0, 0, 0, false};
@@ -47,6 +48,7 @@ TEST(NormalizeTest, ZeroNorm)
     EXPECT_NEAR(norm(v), 0.0, 1e-3);
 }
 
+// Test per verificare le proprietà di Goldberg del poliedro duale (b=1)
 TEST(DualTest, Goldbergb1)
 {
     Polyhedron p = tetraedro();
@@ -57,6 +59,7 @@ TEST(DualTest, Goldbergb1)
     EXPECT_EQ(g.numFaces(), p.numVertices()) << "mismatch between faces and vertices";
 }
 
+// Test per calcolare il cammino minimo in un grafo semplice
 TEST(ShortestPathTest, SimpleGraph)
 {
 
@@ -98,6 +101,7 @@ TEST(ShortestPathTest, SimpleGraph)
     EXPECT_TRUE(poly.edges[4].ShortPath);
 }
 
+// Test per calcolare il cammino minimo in un tetraedro
 TEST(ShortestPathTest, tetrahedronPath)
 {
     Polyhedron p = tetraedro();
@@ -112,6 +116,7 @@ TEST(ShortestPathTest, tetrahedronPath)
     EXPECT_FALSE(p.edges[3].ShortPath);
 }
 
+// Test per verificare il comportamento con un grafo sconnesso
 TEST(ShortestPathTest, DisconnectedGraph)
 {
     Polyhedron poly;
@@ -139,6 +144,7 @@ TEST(ShortestPathTest, DisconnectedGraph)
     EXPECT_FALSE(poly.edges[1].ShortPath);
 }
 
+// Test per calcolare il cammino minimo in un grafo complesso con percorsi multipli
 TEST(ShortestPathTest, ComplexGraphMultiplePaths)
 {
     Polyhedron poly;
@@ -180,6 +186,7 @@ TEST(ShortestPathTest, ComplexGraphMultiplePaths)
     EXPECT_FALSE(poly.edges[6].ShortPath);
 }
 
+// Test per verificare le proprietà del poliedro duale con triangolazione (b=2)
 TEST(DualTest, Goldbergb2)
 {
     Polyhedron p = tetraedro();
@@ -191,6 +198,7 @@ TEST(DualTest, Goldbergb2)
     EXPECT_EQ(g.numFaces(), ptr.numVertices()) << "mismatch between faces and vertices";
 }
 
+// Test per verificare le proprietà di Goldberg del poliedro duale con triangolazione (b=3)
 TEST(DualTest, Goldbergb3)
 {
     Polyhedron p = tetraedro();
@@ -201,6 +209,8 @@ TEST(DualTest, Goldbergb3)
     EXPECT_EQ(g.numEdges(), ptr.numEdges()) << "mismatch bitween edges";
     EXPECT_EQ(g.numFaces(), ptr.numVertices()) << "mismatch between faces and vertices";
 }
+
+// Test per calcolare numero di lati e distanza totale del cammino minimo
 TEST(ShortPathInfoTest, CalcolaNumeroLatiEDistanzaTotale) {
     // Crea un poliedro semplice con 3 vertici e 2 edge
     Polyhedron poly;

@@ -10,6 +10,8 @@
 using namespace std;
 using namespace polyhedron_library;
 
+// Test per verificare che una faccia triangolare valida
+// sia correttamente identificata come valida
 TEST(isValidTest, ValidFaceTest)
 {
     vector<Vertex> vertices_list = {
@@ -29,27 +31,8 @@ TEST(isValidTest, ValidFaceTest)
     EXPECT_TRUE(face1.isValid());
 }
 
-/*
-TEST(isValidTest, MismatchedListsTest)
-{
-    vector<Vertex> vertices_list = {
-        {1, 0.0, 0.0, 0.0, false},
-        {0, 1.0, 0.0, 0.0, false},
-        {2, 0.0, 1.0, 0.0, false}
-    };
-
-    Edge e0{0, 0, 1, 0};
-    Edge e1{1, 1, 2, 0};
-    Edge e2{2, 2, 0, 0};
-
-    vector<Edge> edges_list = {e0, e1, e2};
-
-    Face face2{1, vertices_list, edges_list};
-
-    EXPECT_FALSE(face2.isValid());
-}
-*/
-
+// Test per verificare che una faccia con spigoli discontinui
+// sia correttamente identificata come non valida
 TEST(isValidTest, DiscontinuityTest)
 {
     vector<Vertex> vertices_list = {
@@ -68,14 +51,13 @@ TEST(isValidTest, DiscontinuityTest)
     EXPECT_FALSE(face3.isValid());
 }
 
-// test for sorting function
-
+// Test per verificare il corretto funzionamento della funzione di sorting
 TEST(SortTest, SortEdgesTest)
 {
 
     using std::numbers::phi;
 
-	vector<Vertex> vertices_list = {
+    vector<Vertex> vertices_list = {
         {0, -1, phi, 0, false},
         {1, 1, phi, 0, false},
         {2, -1, -phi, 0, false},
@@ -99,28 +81,28 @@ TEST(SortTest, SortEdgesTest)
         {25, 7, 6, false}, {26, 2, 10, false}, {27, 10, 6, false}, {28, 10, 7, false}, {29, 11, 10, false}
     };
 
-	vector<Face> faces_list = {
-		{0, {vertices_list[5], vertices_list[0], vertices_list[11]}, {edges_list[0], edges_list[2], edges_list[10]}},
-		{1, {vertices_list[0], vertices_list[5], vertices_list[1]}, {edges_list[0], edges_list[5], edges_list[1]}},
-		{2, {vertices_list[5], vertices_list[1], vertices_list[9]}, {edges_list[5], edges_list[8], edges_list[9]}},
-		{3, {vertices_list[5], vertices_list[4], vertices_list[9]}, {edges_list[16], edges_list[13], edges_list[9]}},
-		{4, {vertices_list[4], vertices_list[5], vertices_list[11]}, {edges_list[16], edges_list[10], edges_list[17]}},
-		{5, {vertices_list[4], vertices_list[3], vertices_list[9]}, {edges_list[15], edges_list[14], edges_list[13]}},
-		{6, {vertices_list[4], vertices_list[11], vertices_list[2]}, {edges_list[17], edges_list[19], edges_list[18]}},
-		{7, {vertices_list[2], vertices_list[3], vertices_list[6]}, {edges_list[20], edges_list[22], edges_list[21]}},
-		{8, {vertices_list[6], vertices_list[2], vertices_list[10]}, {edges_list[21], edges_list[26], edges_list[27]}},
-		{9, {vertices_list[3], vertices_list[8], vertices_list[6]}, {edges_list[23], edges_list[24], edges_list[22]}},
-		{10, {vertices_list[8], vertices_list[9], vertices_list[3]}, {edges_list[11], edges_list[14], edges_list[23]}},
-		{11, {vertices_list[9], vertices_list[8], vertices_list[1]}, {edges_list[11], edges_list[7], edges_list[8]}},
-		{12, {vertices_list[8], vertices_list[7], vertices_list[1]}, {edges_list[12], edges_list[6], edges_list[7]}},
-		{13, {vertices_list[6], vertices_list[7], vertices_list[8]}, {edges_list[25], edges_list[12], edges_list[24]}},
-		{14, {vertices_list[7], vertices_list[10], vertices_list[6]}, {edges_list[28], edges_list[27], edges_list[25]}},
-		{15, {vertices_list[7], vertices_list[10], vertices_list[0]}, {edges_list[28], edges_list[3], edges_list[4]}},
-		{16, {vertices_list[0], vertices_list[10], vertices_list[11]}, {edges_list[3], edges_list[29], edges_list[2]}},
-		{17, {vertices_list[4], vertices_list[2], vertices_list[3]}, {edges_list[18], edges_list[20], edges_list[15]}},
-		{18, {vertices_list[1], vertices_list[0], vertices_list[7]}, {edges_list[1], edges_list[4], edges_list[6]}},
-		{19, {vertices_list[11], vertices_list[2], vertices_list[10]}, {edges_list[19], edges_list[26], edges_list[29]}}
-	};
+    vector<Face> faces_list = {
+        {0, {vertices_list[5], vertices_list[0], vertices_list[11]}, {edges_list[0], edges_list[2], edges_list[10]}},
+        {1, {vertices_list[0], vertices_list[5], vertices_list[1]}, {edges_list[0], edges_list[5], edges_list[1]}},
+        {2, {vertices_list[5], vertices_list[1], vertices_list[9]}, {edges_list[5], edges_list[8], edges_list[9]}},
+        {3, {vertices_list[5], vertices_list[4], vertices_list[9]}, {edges_list[16], edges_list[13], edges_list[9]}},
+        {4, {vertices_list[4], vertices_list[5], vertices_list[11]}, {edges_list[16], edges_list[10], edges_list[17]}},
+        {5, {vertices_list[4], vertices_list[3], vertices_list[9]}, {edges_list[15], edges_list[14], edges_list[13]}},
+        {6, {vertices_list[4], vertices_list[11], vertices_list[2]}, {edges_list[17], edges_list[19], edges_list[18]}},
+        {7, {vertices_list[2], vertices_list[3], vertices_list[6]}, {edges_list[20], edges_list[22], edges_list[21]}},
+        {8, {vertices_list[6], vertices_list[2], vertices_list[10]}, {edges_list[21], edges_list[26], edges_list[27]}},
+        {9, {vertices_list[3], vertices_list[8], vertices_list[6]}, {edges_list[23], edges_list[24], edges_list[22]}},
+        {10, {vertices_list[8], vertices_list[9], vertices_list[3]}, {edges_list[11], edges_list[14], edges_list[23]}},
+        {11, {vertices_list[9], vertices_list[8], vertices_list[1]}, {edges_list[11], edges_list[7], edges_list[8]}},
+        {12, {vertices_list[8], vertices_list[7], vertices_list[1]}, {edges_list[12], edges_list[6], edges_list[7]}},
+        {13, {vertices_list[6], vertices_list[7], vertices_list[8]}, {edges_list[25], edges_list[12], edges_list[24]}},
+        {14, {vertices_list[7], vertices_list[10], vertices_list[6]}, {edges_list[28], edges_list[27], edges_list[25]}},
+        {15, {vertices_list[7], vertices_list[10], vertices_list[0]}, {edges_list[28], edges_list[3], edges_list[4]}},
+        {16, {vertices_list[0], vertices_list[10], vertices_list[11]}, {edges_list[3], edges_list[29], edges_list[2]}},
+        {17, {vertices_list[4], vertices_list[2], vertices_list[3]}, {edges_list[18], edges_list[20], edges_list[15]}},
+        {18, {vertices_list[1], vertices_list[0], vertices_list[7]}, {edges_list[1], edges_list[4], edges_list[6]}},
+        {19, {vertices_list[11], vertices_list[2], vertices_list[10]}, {edges_list[19], edges_list[26], edges_list[29]}}
+    };
 
     for(size_t j = 0; j < faces_list.size() - 1; j++)
     {

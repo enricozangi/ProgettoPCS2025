@@ -26,13 +26,13 @@ int insertVertex(vector<Vertex>& vertices, double x, double y, double z, int& ne
             return v.id;
         }
     }
-
     int id = nextVertexId++;
     vertices.push_back({ id, x, y, z, false });
     return id;
 }
 
-// Funzione principale
+// Funzione per la triangolazione di un poliedro di classe 1
+
 Polyhedron triangolazione(const Polyhedron& poly, int b) {
     Polyhedron newPoly;
     newPoly.id = poly.id;
@@ -46,6 +46,7 @@ Polyhedron triangolazione(const Polyhedron& poly, int b) {
     map<string, bool> faceMap;
 
     // Ciclo sulle facce
+
     for (const auto& face : poly.faces) {
         const Vertex& A = poly.vertices[face.vertices[0].id];
         const Vertex& B = poly.vertices[face.vertices[1].id];
@@ -55,13 +56,15 @@ Polyhedron triangolazione(const Polyhedron& poly, int b) {
         vector<Edge> localEdges;  
 
         // Genera nuovi vertici sulla faccia
+
         for (int i = 0; i <= b; ++i) {
             for (int j = 0; j <= b - i; ++j) {
-                // J fino a b-1 perché così mi è garantito che i vertici nuovi siano all'intenro della faccia
+                // j fino a b-1 perché così è garantito che i vertici nuovi siano all'intenro della faccia
                 double u = double(i) / b;
                 double v = double(j) / b;
                 double w = 1.0 - u - v;
-                // u,v,w sono coordinate baricentriche, la loro somma uguale a uno e servono per trovare le coordinate del nuovo vertice
+                // u, v, w sono coordinate baricentriche, la loro somma uguale
+                // a 1 e servono per trovare le coordinate del nuovo vertice
                 double x = u * A.x + v * B.x + w * C.x;
                 double y = u * A.y + v * B.y + w * C.y;
                 double z = u * A.z + v * B.z + w * C.z;
@@ -90,6 +93,7 @@ Polyhedron triangolazione(const Polyhedron& poly, int b) {
         }
 
         // Trova le facce locali combinando 3 edges
+
         for (size_t i = 0; i < localEdges.size(); ++i) {
             for (size_t j = i + 1; j < localEdges.size(); ++j) {
                 for (size_t k = j + 1; k < localEdges.size(); ++k) {
@@ -146,6 +150,8 @@ bool edgeExistsInVector(const vector<Edge>& edges, int id1, int id2) {
 // che portano la complessità per faccia a O(b^6) nel caso peggiore (dato che il numero di edge locali è O(b^2), 
 // e si considerano tutte le terne). 
 // Complessivamente, la complessità totale è O(F * b^6), dove F è il numero di facce del poliedro di partenza.
+
+// Funzione che esegue la triangolazione di un poliedro di classe 2
 
 Polyhedron triangolazione2(const Polyhedron& poly, int b) {
     Polyhedron newPoly;
